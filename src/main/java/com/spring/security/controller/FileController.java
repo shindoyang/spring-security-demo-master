@@ -8,6 +8,7 @@ import com.spring.security.entity.FileUploadEntity;
 import com.spring.security.service.FileUploadService;
 import com.spring.security.utils.FileUtils;
 import com.spring.security.utils.IdUtils;
+import com.spring.security.utils.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,4 +49,9 @@ public class FileController {
     }
 
 
+    public static void main(String[] args) {
+        String str1 = "sdfsfwerwrwfsdwrewDDs";
+        String s = UUID.nameUUIDFromBytes((str1).getBytes()).toString();
+        System.out.println(s);
+    }
 }
