@@ -37,7 +37,10 @@ public enum ResultCode {
     /* 业务错误 */
     NO_PERMISSION(3001, "没有权限"),
 
-    FAIL_ERROR(4001, "导入文件格式错误，请导入xlsx文件！");
+    FAIL_ERROR(4001, "导入文件格式错误，请导入xlsx文件！"),
+    FAIL_EMPTY(4002, "导入文件内容为空，请检查导入文件！"),
+    FAIL_OVER_MAX(4003, "请导入50w行内的文件！"),
+    FAIL_SENSITIVE_ERROR(4004, "模板参数含有%s等敏感词，请修改");
 
     private Integer code;
     private String message;

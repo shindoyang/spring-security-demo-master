@@ -4,6 +4,7 @@ import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
 import com.spring.security.config.AdmissionConfig;
+import com.spring.security.config.service.SecurityContextService;
 import com.spring.security.entity.FileUploadEntity;
 import com.spring.security.service.FileUploadService;
 import com.spring.security.utils.FileUtils;
@@ -23,11 +24,20 @@ import java.io.File;
 public class FileController {
 
     @Autowired
+    SecurityContextService securityContextService;
+    @Autowired
     FileUploadService fileUploadService;
 
 
     @PostMapping("/upload")
     public JsonResult upload(MultipartFile file, FileUploadEntity param) {
+
+        String username = securityContextService.getLoginUserName();
+        if (null == username) {
+            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
+        }
+
+
         File saveFile = null;
         if (file != null && StringUtils.isNotBlank(file.getOriginalFilename())) { // 校验模板
             if (!file.getOriginalFilename().toLowerCase().endsWith(".xlsx")) {

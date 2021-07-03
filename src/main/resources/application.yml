@@ -39,6 +39,9 @@ spring:
 server:
   port: 8666
 
+file:
+  max-rows: 500000
+
 mybatis-plus:
   # 如果是放在src/main/java目录下 classpath:/com/yourpackage/*/mapper/*Mapper.xml
   # 如果是放在resource目录 classpath:/mapper/*Mapper.xml

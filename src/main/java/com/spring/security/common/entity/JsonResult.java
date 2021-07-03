@@ -44,6 +44,13 @@ public class JsonResult<T> implements Serializable {
         this.data = data;
     }
 
+    public JsonResult(boolean success, Integer code, String msg, T data) {
+        this.success = success;
+        this.errorCode = success ? ResultCode.SUCCESS.getCode() : (code == null ? ResultCode.COMMON_FAIL.getCode() : code);
+        this.errorMsg = success ? ResultCode.SUCCESS.getMessage() : (msg == null ? ResultCode.COMMON_FAIL.getMessage() : msg);
+        this.data = data;
+    }
+
     public Boolean getSuccess() {
         return success;
     }
