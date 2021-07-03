@@ -55,7 +55,7 @@ public class FileController {
         if (HttpStatus.SUCCESS != (Integer) validateResult.get(AjaxResult.CODE_TAG)) {
             return validateResult;
         }*/
-        return fileUploadService.uploadFile(saveFile, param);
+        return fileUploadService.uploadFile(saveFile, param, username);
     }
 
 

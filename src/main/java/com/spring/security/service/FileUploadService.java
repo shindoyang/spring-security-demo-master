@@ -6,5 +6,5 @@ import com.spring.security.entity.FileUploadEntity;
 import java.io.File;
 
 public interface FileUploadService {
-    JsonResult uploadFile(File file, FileUploadEntity param);
+    JsonResult uploadFile(File file, FileUploadEntity param, String username);
 }

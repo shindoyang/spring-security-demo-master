@@ -5,13 +5,16 @@ import com.mfexcel.sensitive.engine.SensitiveEngine;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
+import com.spring.security.dao.SysUserSchoolRelationDao;
 import com.spring.security.entity.FileUploadEntity;
 import com.spring.security.entity.NmsSmsTmplExcelVo;
+import com.spring.security.entity.SysUserSchoolRelation;
 import com.spring.security.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +26,15 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${file.max-rows}")
     int fileMaxRows;
 
+    @Resource
+    SysUserSchoolRelationDao sysUserSchoolRelationDao;
+
     @Override
-    public JsonResult uploadFile(File file, FileUploadEntity param) {
+    public JsonResult uploadFile(File file, FileUploadEntity param, String username) {
+
+        SysUserSchoolRelation relation = sysUserSchoolRelationDao.queryByUsername(username);
+        System.out.println(relation.toString());
+
         if (file != null) {
             // 校验模板文件
             List<NmsSmsTmplExcelVo> list = null;

@@ -11,6 +11,8 @@ public interface SysUserSchoolRelationDao {
 
     SysUserSchoolRelation selectByPrimaryKey(Integer id);
 
+    SysUserSchoolRelation queryByUsername(String userName);
+
     int updateByPrimaryKeySelective(SysUserSchoolRelation record);
 
     int updateByPrimaryKey(SysUserSchoolRelation record);
