@@ -55,6 +55,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 String[] textArray = vo.getTextArray();
                 for (int i = 0; i < textArray.length; i++) {
                     if (textArray[i] != null) {
+                        //todo 必须检查第一列是否手机号
                         List<String> sensitiveList = SensitiveEngine.getInstance().findAllSensitive(textArray[i]);
                         if (sensitiveList != null && sensitiveList.size() > 0) {
                             return new JsonResult(false, ResultCode.FAIL_SENSITIVE_ERROR.getCode(), String.format(ResultCode.FAIL_SENSITIVE_ERROR.getMessage(), ""), sensitiveList.stream().distinct().limit(3).collect(Collectors.joining(",", "【", "】")));
