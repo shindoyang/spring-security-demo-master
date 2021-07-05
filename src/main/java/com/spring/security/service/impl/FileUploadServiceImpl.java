@@ -51,8 +51,8 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public JsonResult uploadFile(MultipartFile file, FileUploadEntity param) {
         //1、检查是否已登录
-        String username = securityContextService.getLoginUserName();
-        if (null == username) {
+        String account = securityContextService.getLoginUserName();
+        if (null == account) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
         }
 
