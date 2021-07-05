@@ -3,7 +3,7 @@ admission:
   # 名称
   name: Admission
   # 文件路径 示例（ Windows配置D:/admission/upload，Linux配置 /home/admission/upload）
-  profile: D:/admission/upload
+  profile: D:/admission
 uid:
   reserveMinutes: 10080
 spring:

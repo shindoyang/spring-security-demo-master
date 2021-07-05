@@ -5,20 +5,26 @@ import com.mfexcel.sensitive.engine.SensitiveEngine;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
+import com.spring.security.config.AdmissionConfig;
+import com.spring.security.config.service.SecurityContextService;
 import com.spring.security.dao.SysUserSchoolRelationDao;
 import com.spring.security.entity.FileUploadEntity;
 import com.spring.security.entity.NmsSmsTmplExcelVo;
-import com.spring.security.entity.SysUserSchoolRelation;
 import com.spring.security.service.FileUploadService;
+import com.spring.security.utils.FileUtils;
+import com.spring.security.utils.IdUtils;
 import com.spring.security.utils.IdWorker;
+import com.spring.security.utils.MobileUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -33,6 +39,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${uid.reserveMinutes}")
     int uidExpireMinutes;
 
+    @Autowired
+    SecurityContextService securityContextService;
+
     @Resource
     SysUserSchoolRelationDao sysUserSchoolRelationDao;
 
@@ -40,25 +49,78 @@ public class FileUploadServiceImpl implements FileUploadService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public JsonResult uploadFile(File file, FileUploadEntity param, String username) {
+    public JsonResult uploadFile(MultipartFile file, FileUploadEntity param) {
+        //1、检查是否已登录
+        String username = securityContextService.getLoginUserName();
+        if (null == username) {
+            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
+        }
+
+        //2、文件保存
+        File saveFile = null;
+        if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())) {
+            // 校验文件后缀
+            if (!file.getOriginalFilename().toLowerCase().endsWith(".xlsx")) {
+                return ResultTool.fail(ResultCode.FAIL_ERROR);
+            }
+            String originalFilename = file.getOriginalFilename();
+            log.info("originalFilename = " + originalFilename);
+
+            // 临时文件名
+            String fileName = IdUtils.randomUUID() + ".xlsx";
+            saveFile = FileUtils.createNewFile(AdmissionConfig.getUploadPath() + "/", fileName);
+            // 转存
+            FileUtils.saveFile(file, saveFile);
+        }
+
+        //3、校验文件
+        if (null != saveFile) {
+            // 读取文件
+            List<NmsSmsTmplExcelVo> list = null;
+            // 模板头部占了两行
+            int lineIdx = 2;
+            if (file != null) {
+                list = EasyExcel.read(saveFile).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
+            }
+            // 判断文件是否为空
+            if (list == null || list.size() <= 0) {
+                return ResultTool.fail(ResultCode.FAIL_EMPTY);
+            }
+            // 判断文件条数是否超过限制
+            if (list.size() > fileMaxRows) {
+                return ResultTool.fail(ResultCode.FAIL_OVER_MAX);
+            }
+            //敏感词校验
+            for (NmsSmsTmplExcelVo vo : list) {
+                //校验文件模板：首列是否手机号
+                if (!MobileUtil.isMobileNO(vo.getMobile())) {
+                    return ResultTool.fail(ResultCode.FAIL_TEMPLATE_ERROR);
+                }
+                String[] textArray = vo.getTextArray();
+                for (int i = 0; i < textArray.length; i++) {
+                    if (textArray[i] != null) {
+                        List<String> sensitiveList = SensitiveEngine.getInstance().findAllSensitive(textArray[i]);
+                        if (sensitiveList != null && sensitiveList.size() > 0) {
+                            return new JsonResult(false, ResultCode.FAIL_SENSITIVE_ERROR.getCode(), String.format(ResultCode.FAIL_SENSITIVE_ERROR.getMessage(), ""), sensitiveList.stream().distinct().limit(3).collect(Collectors.joining(",", "【", "】")));
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return ResultTool.success();
+    }
+
+    /**
+     * 文件转换
+     */
+    /*public JsonResult modifyFile(File file, FileUploadEntity param, String username) {
         IdWorker worker = new IdWorker(1, 1, 1);
         SysUserSchoolRelation relation = sysUserSchoolRelationDao.queryByUsername(username);
         System.out.println(relation.toString());
 
         if (file != null) {
-            // 校验模板文件
-            List<NmsSmsTmplExcelVo> list = null;
-            int lineIdx = 2; // 模板头部占了两行
-            if (file != null) {
-                list = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
-            }
-
-            if (list == null || list.size() <= 0) {
-                return ResultTool.fail(ResultCode.FAIL_EMPTY);
-            }
-            if (list.size() > fileMaxRows) {
-                return ResultTool.fail(ResultCode.FAIL_OVER_MAX);
-            }
 
             List<NmsSmsTmplExcelVo> newList = new ArrayList<>();
             //不做敏感词校验
@@ -91,8 +153,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             newList = null;
         }
         return ResultTool.success();
-    }
-
+    }*/
     private NmsSmsTmplExcelVo setUrl(IdWorker worker, NmsSmsTmplExcelVo vo) {
         //检查内容中是否存在对应的id
         String uid = stringRedisTemplate.opsForValue().get(vo.getMobile());
