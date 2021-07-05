@@ -1,6 +1,7 @@
 package com.spring.security.config.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.utils.ResultTool;
 import com.spring.security.entity.SysUser;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: Hutengfei
@@ -31,7 +34,7 @@ public class CustomizeAuthenticationSuccessHandler implements AuthenticationSucc
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         //更新用户表上次登录时间、更新人、更新时间等字段
-        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SysUser sysUser = sysUserService.selectByName(userDetails.getUsername());
         sysUser.setLastLoginTime(new Date());
         sysUser.setUpdateTime(new Date());
@@ -43,6 +46,11 @@ public class CustomizeAuthenticationSuccessHandler implements AuthenticationSucc
 
         //返回json数据
         JsonResult result = ResultTool.success();
+        Map userMap = new HashMap<>();
+        userMap.put("account", sysUser.getAccount());
+        userMap.put("username", sysUser.getUserName());
+
+        result.setData(JSONObject.toJSON(userMap));
         httpServletResponse.setContentType("text/json;charset=utf-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(result));
     }
