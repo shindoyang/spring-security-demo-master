@@ -7,6 +7,7 @@ import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.utils.ResultTool;
 import com.spring.security.config.service.UserToolService;
 import com.spring.security.entity.SysUserFile;
+import com.spring.security.schedule.UserFileEnhanceScheduled;
 import com.spring.security.service.FileUploadService;
 import com.spring.security.service.SysUserFileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,4 +54,12 @@ public class FileController {
         }
         return ResultTool.success();
     }
+
+    @Autowired
+    UserFileEnhanceScheduled userFileEnhanceScheduled;
+
+   /* @PostMapping("/enhance")
+    public void enhance() {
+        userFileEnhanceScheduled.sendMessageScheduled();
+    }*/
 }

@@ -13,13 +13,11 @@ import com.spring.security.entity.SysUserFile;
 import com.spring.security.service.FileUploadService;
 import com.spring.security.utils.FileUtils;
 import com.spring.security.utils.IdUtils;
-import com.spring.security.utils.IdWorker;
 import com.spring.security.utils.MobileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +25,6 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,17 +34,11 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${file.max-rows}")
     int fileMaxRows;
 
-    @Value("${uid.reserveMinutes}")
-    int uidExpireMinutes;
-
     @Autowired
     UserToolService userToolService;
 
     @Resource
     SysUserFileServiceImpl sysUserFileService;
-
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public JsonResult uploadFile(MultipartFile file, FileRequestVO param) {
@@ -65,8 +56,8 @@ public class FileUploadServiceImpl implements FileUploadService {
             log.info("originalFilename = " + originalFilename);
 
             // 临时文件名
-            String fileName = IdUtils.randomUUID() + ".xlsx";
-            saveFile = FileUtils.createNewFile(AdmissionConfig.getUploadPath() + "/", fileName);
+            String fileName = IdUtils.randomUUID();
+            saveFile = FileUtils.createNewFile(AdmissionConfig.getUploadPath() + "/", (fileName + "_temp.xlsx"));
             // 转存
             FileUtils.saveFile(file, saveFile);
 
@@ -114,117 +105,6 @@ public class FileUploadServiceImpl implements FileUploadService {
             sysUserFileService.save(sysUserFile);
         }
         return ResultTool.success();
-    }
-
-    /**
-     * 文件转换
-     */
-    /*public JsonResult modifyFile(File file, FileUploadEntity param, String username) {
-        IdWorker worker = new IdWorker(1, 1, 1);
-        SysUserSchoolRelation relation = sysUserSchoolRelationDao.queryByUsername(username);
-        System.out.println(relation.toString());
-
-        if (file != null) {
-
-            List<NmsSmsTmplExcelVo> newList = new ArrayList<>();
-            //不做敏感词校验
-            //todo 根据文件行数获取一次性获取uid
-            //todo 文件内容赋值
-
-
-            for (NmsSmsTmplExcelVo vo : list) {
-                lineIdx++;
-                String[] textArray = vo.getTextArray();
-                for (int i = 0; i < textArray.length; i++) {
-                    if (textArray[i] != null) {
-                        //todo 必须检查第一列是否手机号
-                        List<String> sensitiveList = SensitiveEngine.getInstance().findAllSensitive(textArray[i]);
-                        if (sensitiveList != null && sensitiveList.size() > 0) {
-                            return new JsonResult(false, ResultCode.FAIL_SENSITIVE_ERROR.getCode(), String.format(ResultCode.FAIL_SENSITIVE_ERROR.getMessage(), ""), sensitiveList.stream().distinct().limit(3).collect(Collectors.joining(",", "【", "】")));
-                        }
-                    }
-                }
-
-
-                //设置短链
-                vo = setUrl(worker, vo);
-                newList.add(vo);
-            }
-
-            EasyExcel.write("D:/" + param.getFileName() + ".xlsx", NmsSmsTmplExcelVo.class).sheet("Student").doWrite(newList);
-            // 释放内存
-            list = null;
-            newList = null;
-        }
-        return ResultTool.success();
-    }*/
-    private NmsSmsTmplExcelVo setUrl(IdWorker worker, NmsSmsTmplExcelVo vo) {
-        //检查内容中是否存在对应的id
-        String uid = stringRedisTemplate.opsForValue().get(vo.getMobile());
-        if (null == uid || "null".equals(uid)) {
-            uid = String.valueOf(worker.nextId());
-        }
-
-        if (null == vo.getText1()) {
-            vo.setText1(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText2()) {
-            vo.setText2(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText2()) {
-            vo.setText2(String.valueOf(uid));
-            return vo;
-        }
-        if (null == vo.getText3()) {
-            vo.setText3(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText4()) {
-            vo.setText4(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText5()) {
-            vo.setText5(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText6()) {
-            vo.setText6(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText7()) {
-            vo.setText7(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText8()) {
-            vo.setText8(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText9()) {
-            vo.setText9(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        if (null == vo.getText10()) {
-            vo.setText10(String.valueOf(uid));
-            saveUid(vo, uid);
-            return vo;
-        }
-        return vo;
-    }
-
-    public void saveUid(NmsSmsTmplExcelVo vo, String uid) {
-        stringRedisTemplate.opsForValue().set(vo.getMobile(), uid, uidExpireMinutes,
-                TimeUnit.MINUTES);
     }
 
 }
