@@ -8,5 +8,5 @@ import com.spring.security.entity.SysUserFile;
  *
  */
 public interface SysUserFileService extends IService<SysUserFile> {
-    Object findList(IPage<SysUserFile> page);
+    Object findList(IPage<SysUserFile> page, String curUser);
 }

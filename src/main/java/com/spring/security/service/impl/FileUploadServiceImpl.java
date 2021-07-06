@@ -2,13 +2,12 @@ package com.spring.security.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.mfexcel.sensitive.engine.SensitiveEngine;
+import com.spring.security.VO.FileRequestVO;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
 import com.spring.security.config.AdmissionConfig;
-import com.spring.security.config.service.SecurityContextService;
 import com.spring.security.dao.SysUserSchoolRelationDao;
-import com.spring.security.entity.FileUploadEntity;
 import com.spring.security.entity.NmsSmsTmplExcelVo;
 import com.spring.security.service.FileUploadService;
 import com.spring.security.utils.FileUtils;
@@ -17,7 +16,6 @@ import com.spring.security.utils.IdWorker;
 import com.spring.security.utils.MobileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -39,9 +37,6 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${uid.reserveMinutes}")
     int uidExpireMinutes;
 
-    @Autowired
-    SecurityContextService securityContextService;
-
     @Resource
     SysUserSchoolRelationDao sysUserSchoolRelationDao;
 
@@ -49,14 +44,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public JsonResult uploadFile(MultipartFile file, FileUploadEntity param) {
-        //1、检查是否已登录
-        String account = securityContextService.getLoginUserName();
-        if (null == account) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
+    public JsonResult uploadFile(MultipartFile file, FileRequestVO param) {
 
-        //2、文件保存
+        //1、文件保存
         File saveFile = null;
         if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())) {
             // 校验文件后缀
@@ -73,7 +63,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             FileUtils.saveFile(file, saveFile);
         }
 
-        //3、校验文件
+        //2、校验文件
         if (null != saveFile) {
             // 读取文件
             List<NmsSmsTmplExcelVo> list = null;
