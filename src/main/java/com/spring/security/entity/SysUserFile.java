@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @TableName sys_user_file
@@ -42,6 +43,11 @@ public class SysUserFile implements Serializable {
      *
      */
     private Integer status;
+
+    /**
+     *
+     */
+    private Date createTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -116,6 +122,20 @@ public class SysUserFile implements Serializable {
         this.status = status;
     }
 
+    /**
+     *
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     *
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -132,7 +152,8 @@ public class SysUserFile implements Serializable {
                 && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
                 && (this.getFileName() == null ? other.getFileName() == null : this.getFileName().equals(other.getFileName()))
                 && (this.getFileUrl() == null ? other.getFileUrl() == null : this.getFileUrl().equals(other.getFileUrl()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()));
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
     }
 
     @Override
@@ -144,6 +165,7 @@ public class SysUserFile implements Serializable {
         result = prime * result + ((getFileName() == null) ? 0 : getFileName().hashCode());
         result = prime * result + ((getFileUrl() == null) ? 0 : getFileUrl().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
+        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         return result;
     }
 
@@ -158,6 +180,7 @@ public class SysUserFile implements Serializable {
         sb.append(", fileName=").append(fileName);
         sb.append(", fileUrl=").append(fileUrl);
         sb.append(", status=").append(status);
+        sb.append(", createTime=").append(createTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

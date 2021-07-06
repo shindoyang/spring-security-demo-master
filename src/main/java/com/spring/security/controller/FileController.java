@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-
 @RestController
 @RequestMapping("/file")
 public class FileController {
@@ -38,10 +36,10 @@ public class FileController {
 
 
     @GetMapping("/page")
-    public JsonResult findAll(HttpServletRequest request) {
+    public JsonResult findAll(FileUploadEntity param) {
         //获取前台发送过来的数据
-        Integer pageNo = Integer.valueOf(request.getParameter("page"));
-        Integer pageSize = Integer.valueOf(request.getParameter("size"));
+        Integer pageNo = param.getPage();
+        Integer pageSize = param.getSize();
         IPage<SysUserFile> page = new Page<>(pageNo, pageSize);
         Object list = sysUserFileService.findList(page);
         if (null != list) {
