@@ -21,8 +21,9 @@ public class SysUserFile implements Serializable {
     /**
      *
      */
+//    @TableId(type = IdType.AUTO)
     @TableId
-    private Integer id;
+    private Long id;
 
     /**
      * 账号
@@ -42,7 +43,7 @@ public class SysUserFile implements Serializable {
     /**
      *
      */
-    private Integer status;
+    private Integer status = 0;
 
     /**
      *
@@ -52,17 +53,11 @@ public class SysUserFile implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    /**
-     *
-     */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
