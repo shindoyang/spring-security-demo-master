@@ -52,6 +52,8 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     public JsonResult uploadFile(MultipartFile file, FileRequestVO param) {
 
+        //todo 文件重复上传校验
+
         //1、文件保存
         File saveFile = null;
         if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())) {

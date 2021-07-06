@@ -6,6 +6,9 @@ admission:
   profile: D:/admission
 uid:
   reserveMinutes: 10080
+schedule:
+  userfile:
+    cron: 0 0/1 * * * ?
 spring:
   application:
     name: isoftstone-security
@@ -43,6 +46,11 @@ server:
 
 file:
   max-rows: 500000
+
+cors:
+  allowedOrigin: '*'
+  allowedHeaders: '*'
+  allowedMethods: GET,PUT,POST,PATCH,DELETE,OPTIONS
 
 mybatis-plus:
   # 如果是放在src/main/java目录下 classpath:/com/yourpackage/*/mapper/*Mapper.xml
