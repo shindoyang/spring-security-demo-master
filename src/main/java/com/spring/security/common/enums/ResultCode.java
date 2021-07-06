@@ -41,7 +41,9 @@ public enum ResultCode {
     FAIL_EMPTY(4002, "导入文件内容为空，请检查导入文件！"),
     FAIL_OVER_MAX(4003, "请导入50w行内的文件！"),
     FAIL_SENSITIVE_ERROR(4004, "模板参数含有%s等敏感词，请修改"),
-    FAIL_TEMPLATE_ERROR(4005, "请使用普通消息模板上传或检查首列手机号是否正确！");
+    FAIL_TEMPLATE_ERROR(4005, "请使用普通消息模板上传或检查首列手机号是否正确！"),
+    FAIL_NO_FILE_AUTH(4006, "您无权操作该文件！"),
+    FAIL_FILE_DOWNLOAD_ERROR(4007, "您无权操作该文件！");
 
     private Integer code;
     private String message;

@@ -7,7 +7,6 @@ import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.utils.ResultTool;
 import com.spring.security.config.service.UserToolService;
 import com.spring.security.entity.SysUserFile;
-import com.spring.security.schedule.UserFileEnhanceScheduled;
 import com.spring.security.service.FileUploadService;
 import com.spring.security.service.SysUserFileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/file")
@@ -55,11 +57,19 @@ public class FileController {
         return ResultTool.success();
     }
 
-    @Autowired
-    UserFileEnhanceScheduled userFileEnhanceScheduled;
+    /**
+     * 文件下载（失败了会返回一个有部分数据的Excel）
+     * <p>
+     * 1. 创建excel对应的实体对象
+     * <p>
+     * 2. 设置返回的 参数
+     * <p>
+     * 3. 直接写，这里注意，finish的时候会自动关闭OutputStream,当然你外面再关闭流问题不大
+     */
+    @GetMapping("download")
+    public void download(HttpServletResponse response, FileRequestVO param) throws IOException {
+        userToolService.checkUserlogin();
+        fileUploadService.getDownloadData(response, param);
+    }
 
-   /* @PostMapping("/enhance")
-    public void enhance() {
-        userFileEnhanceScheduled.sendMessageScheduled();
-    }*/
 }

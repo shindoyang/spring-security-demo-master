@@ -1,6 +1,7 @@
 package com.spring.security.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mfexcel.sensitive.engine.SensitiveEngine;
 import com.spring.security.VO.FileRequestVO;
 import com.spring.security.common.entity.JsonResult;
@@ -22,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,6 +109,42 @@ public class FileUploadServiceImpl implements FileUploadService {
             sysUserFileService.save(sysUserFile);
         }
         return ResultTool.success();
+    }
+
+    @Override
+    public JsonResult getDownloadData(HttpServletResponse response, FileRequestVO param) {
+
+        try {
+            QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
+            wrapper.eq("id", param.getFileId());
+            SysUserFile sysUserFile = sysUserFileService.getOne(wrapper);
+
+            //校验当前用户是否有该文件的操作权限
+            String loginUser = userToolService.getLoginUser();
+            if (null != sysUserFile && loginUser != null && !loginUser.equals(sysUserFile.getAccount())) {
+                return ResultTool.fail(ResultCode.FAIL_NO_FILE_AUTH);
+            }
+
+            String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
+            String finishFilePath = filePath + ".xlsx";
+            String fileOrgName = sysUserFile.getFileName().substring(0, sysUserFile.getFileName().lastIndexOf(".xlsx"));
+
+            File file = new File(finishFilePath);
+            List<NmsSmsTmplExcelVo> nmsFileList = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
+
+            // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding("utf-8");
+            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+            String fileName = URLEncoder.encode(fileOrgName, "UTF-8").replaceAll("\\+", "%20");
+            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+            EasyExcel.write(response.getOutputStream(), NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(nmsFileList);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultTool.fail(ResultCode.FAIL_FILE_DOWNLOAD_ERROR);
+        }
+
+        return null;
     }
 
 }
