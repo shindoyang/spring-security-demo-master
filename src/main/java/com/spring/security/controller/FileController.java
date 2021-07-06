@@ -42,13 +42,12 @@ public class FileController {
     @GetMapping("/page")
     public JsonResult findAll(FileRequestVO param) {
         //1、检查是否已登录
-        JsonResult loginUser = userToolService.checkUserlogin();
-
+        userToolService.checkUserlogin();
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
         IPage<SysUserFile> page = new Page<>(pageNo, pageSize);
-        Object list = sysUserFileService.findList(page, String.valueOf(loginUser.getData()));
+        Object list = sysUserFileService.findList(page);
         if (null != list) {
             return ResultTool.success(list);
         }
