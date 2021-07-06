@@ -8,4 +8,9 @@ public class FileUploadEntity {
     //    @ApiModelProperty(value = "消息模板ID")
     private String fileName;
 
+    private Integer page;
+
+    private Integer size;
+
+
 }
