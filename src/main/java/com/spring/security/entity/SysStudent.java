@@ -30,6 +30,8 @@ public class SysStudent implements Serializable {
      */
     private String account;
 
+    private Long stu_uid;
+
     /**
      * 手机号
      */

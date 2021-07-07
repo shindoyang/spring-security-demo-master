@@ -12,8 +12,9 @@ import static com.spring.security.utils.JWTUtils.verify;
 @Slf4j
 @Service
 public class UserToolService {
-//    @Autowired
+    //    @Autowired
 //    SecurityContextService securityContextService;
+    private final static int SUBSTRING_START_INDEX = 7;
 
     /**
      * 检查是否已登录
@@ -31,12 +32,12 @@ public class UserToolService {
             return false;
         }
 
-        String token = authorization.substring(7, authorization.length());
+        String token = authorization.substring(SUBSTRING_START_INDEX, authorization.length());
         try {
             DecodedJWT tokenInfo = verify(token);
             String account = tokenInfo.getClaim("username").asString();
         } catch (Exception e) {
-            log.info("请求token：{}", authorization);
+            log.info("请求tokeng格式转换异常：{}", authorization);
             e.printStackTrace();
             return false;
         }
@@ -59,7 +60,7 @@ public class UserToolService {
         return account;*/
 
         String authorization = request.getHeader("Authorization");
-        String token = authorization.substring(6, authorization.length());
+        String token = authorization.substring(SUBSTRING_START_INDEX, authorization.length());
         DecodedJWT tokenInfo = verify(token);
         String account = tokenInfo.getClaim("username").asString();
         return account;

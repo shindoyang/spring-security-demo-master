@@ -43,6 +43,8 @@ public class NmsSmsTmplExcelVo {
     @ExcelProperty(value = {"普通消息模板（最多10万行）", "text10"}, index = 10)
     private String text10;
 
+    private long stu_uid;
+
 
     public String[] getTextArray() {
         return new String[]{text1, text2, text3, text4, text5, text6, text7, text8, text9, text10};

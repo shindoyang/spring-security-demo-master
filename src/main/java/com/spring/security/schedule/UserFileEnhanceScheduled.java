@@ -60,44 +60,49 @@ public class UserFileEnhanceScheduled {
         wrapper.eq("status", 0);
         List<SysUserFile> list = sysUserFileService.list(wrapper);
         log.info("待处理文件数：{}", list.size());
-        log.info("待处理文件内容：{}", JSON.toJSON(list));
+
         if (null != list && list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                int index = i + 1;
+                log.info("开始处理第 {} 条文件，内容：{}", index, JSON.toJSON(list));
+                SysUserFile sysUserFile = list.get(0);
+                String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
+                String tempFilePath = filePath + "_temp.xlsx";
+                String finishFilePath = filePath + ".xlsx";
 
-            SysUserFile sysUserFile = list.get(0);
-            String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
-            String tempFilePath = filePath + "_temp.xlsx";
-            String finishFilePath = filePath + ".xlsx";
+                try {
+                    File file = new File(tempFilePath);
+                    if (file != null) {
+                        // 读取文件
+                        StopWatch stopWatch = new StopWatch();
+                        stopWatch.start();
+                        List<NmsSmsTmplExcelVo> nmsFileList = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
+                        stopWatch.stop();
+                        log.info("读取文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                        log.info("当前文件总行数：{}", null != nmsFileList ? nmsFileList.size() : 0);
 
-            try {
-                File file = new File(tempFilePath);
-                if (file != null) {
-                    // 读取文件
-                    StopWatch stopWatch = new StopWatch();
-                    stopWatch.start();
-                    List<NmsSmsTmplExcelVo> nmsFileList = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
-                    stopWatch.stop();
-                    log.info("读取文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
-                    log.info("当前文件总行数：{}", null != nmsFileList ? nmsFileList.size() : 0);
+                        //添加短链
+                        stopWatch.start();
+                        List<NmsSmsTmplExcelVo> newList = setUrl(sysUserFile, nmsFileList);
+                        stopWatch.stop();
+                        log.info("添加短链耗时：{} 秒", stopWatch.getTotalTimeSeconds());
 
+                        stopWatch.start();
+                        EasyExcel.write(finishFilePath, NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(newList);
+                        stopWatch.stop();
+                        log.info("写文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                    }
+                    sysUserFile.setStatus(1);
+                    sysUserFile.setUpdateTime(new Date());
+                    sysUserFileService.updateById(sysUserFile);
+                    log.info("文件：{}，处理完成！", sysUserFile.getFileName());
 
-                    stopWatch.start();
-                    List<NmsSmsTmplExcelVo> newList = setUrl(sysUserFile, nmsFileList);
-                    stopWatch.stop();
-                    log.info("添加短链耗时：{} 秒", stopWatch.getTotalTimeSeconds());
-
-                    stopWatch.start();
-                    EasyExcel.write(finishFilePath, NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(newList);
-                    stopWatch.stop();
-                    log.info("写文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                } catch (Exception e) {
+                    log.error("文件：{}，处理失败：{}", sysUserFile.getFileName(), e.getMessage());
+                    e.printStackTrace();
                 }
-                sysUserFile.setStatus(1);
-                sysUserFile.setUpdateTime(new Date());
-                sysUserFileService.updateById(sysUserFile);
-                log.info("文件：{}，处理完成！", sysUserFile.getFileName());
 
-            } catch (Exception e) {
-                log.error("文件：{}，处理失败：{}", sysUserFile.getFileName(), e.getMessage());
-                e.printStackTrace();
+                log.info("第 {} 条文件处理完成！", index);
             }
         }
     }
@@ -133,9 +138,11 @@ public class UserFileEnhanceScheduled {
                     uid = String.valueOf(cacheUidMap.get(vo.getMobile()));
                 }
             } else {
-                uid = String.valueOf(worker.nextId());
+                long uid_long = worker.nextId();
+                uid = String.valueOf(uid_long);
                 cacheMobileArr.add(vo.getMobile());
                 cacheUidMap.put(vo.getMobile(), uid);
+                vo.setStu_uid(uid_long);
                 insertDBList.add(vo);
             }
             //设置短链
