@@ -1,4 +1,5 @@
 package com.spring.security.config.handler;
+/*
 
 import com.spring.security.entity.SysPermission;
 import com.spring.security.service.SysPermissionService;
@@ -13,11 +14,13 @@ import org.springframework.util.AntPathMatcher;
 import java.util.Collection;
 import java.util.List;
 
+*/
 /**
  * @Author: Hutengfei
  * @Description:
  * @Date Create in 2019/9/3 21:06
- */
+ *//*
+
 @Component
 public class CustomizeFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
     AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -51,3 +54,4 @@ public class CustomizeFilterInvocationSecurityMetadataSource implements FilterIn
         return true;
     }
 }
+*/

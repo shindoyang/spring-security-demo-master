@@ -1,5 +1,5 @@
 package com.spring.security.config;
-
+/*
 import com.spring.security.config.handler.*;
 import com.spring.security.config.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
-/**
+*//**
  * @Author: Hutengfei
  * @Description:
  * @Date Create in 2019/8/28 20:15
- */
+ *//*
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -108,4 +108,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     expiredSessionStrategy(sessionInformationExpiredStrategy);//会话失效(账号被挤下线)处理逻辑
         http.addFilterBefore(securityInterceptor, FilterSecurityInterceptor.class);
     }
-}
+}*/

@@ -1,5 +1,5 @@
 package com.spring.security.config.handler;
-
+/*
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.SecurityMetadataSource;
 import org.springframework.security.access.intercept.AbstractSecurityInterceptor;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import javax.servlet.*;
 import java.io.IOException;
 
-/**
+*//**
  * @Author: Hutengfei
  * @Description: 权限拦截器
  * @Date Create in 2019/9/4 16:25
- */
+ *//*
 @Service
 public class CustomizeAbstractSecurityInterceptor extends AbstractSecurityInterceptor implements Filter {
 
@@ -55,4 +55,4 @@ public class CustomizeAbstractSecurityInterceptor extends AbstractSecurityInterc
             super.afterInvocation(token, null);
         }
     }
-}
+}*/

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     SysUserFileServiceImpl sysUserFileService;
 
     @Override
-    public JsonResult uploadFile(MultipartFile file, FileRequestVO param) {
+    public JsonResult uploadFile(HttpServletRequest request, MultipartFile file, FileRequestVO param) {
 
         //todo 文件重复上传校验
 
@@ -102,7 +103,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
             }
             SysUserFile sysUserFile = new SysUserFile();
-            sysUserFile.setAccount(userToolService.getLoginUser());
+            sysUserFile.setAccount(userToolService.getLoginUser(request));
             sysUserFile.setFileName(originalFilename);
             sysUserFile.setFileUrl(fileName);
             sysUserFile.setCreateTime(new Date());
@@ -112,7 +113,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public JsonResult getDownloadData(HttpServletResponse response, FileRequestVO param) {
+    public JsonResult getDownloadData(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) {
 
         try {
             QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
@@ -120,7 +121,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             SysUserFile sysUserFile = sysUserFileService.getOne(wrapper);
 
             //校验当前用户是否有该文件的操作权限
-            String loginUser = userToolService.getLoginUser();
+            String loginUser = userToolService.getLoginUser(request);
             if (null != sysUserFile && loginUser != null && !loginUser.equals(sysUserFile.getAccount())) {
                 return ResultTool.fail(ResultCode.FAIL_NO_FILE_AUTH);
             }

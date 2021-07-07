@@ -1,7 +1,8 @@
 package com.spring.security.entity;
 
-import java.util.Date;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 用户表(SysUser)实体类
@@ -11,7 +12,7 @@ import java.io.Serializable;
  */
 public class SysUser implements Serializable {
     private static final long serialVersionUID = 915478504870211231L;
-    
+
     private Integer id;
     //账号
     private String account;
@@ -37,6 +38,8 @@ public class SysUser implements Serializable {
     private Integer createUser;
     //修改人
     private Integer updateUser;
+
+    private List<SysPermission> roles;
 
 
     public Integer getId() {
@@ -143,4 +146,11 @@ public class SysUser implements Serializable {
         this.updateUser = updateUser;
     }
 
+    public List<SysPermission> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<SysPermission> roles) {
+        this.roles = roles;
+    }
 }

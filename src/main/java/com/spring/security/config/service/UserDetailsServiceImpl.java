@@ -1,4 +1,5 @@
 package com.spring.security.config.service;
+/*
 
 import com.spring.security.entity.SysPermission;
 import com.spring.security.entity.SysUser;
@@ -15,11 +16,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * @Author: Hutengfei
  * @Description:
  * @Date Create in 2019/8/29 14:36
- */
+ *//*
+
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private SysUserService sysUserService;
@@ -49,3 +52,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new User(sysUser.getAccount(), sysUser.getPassword(), sysUser.getEnabled(), sysUser.getAccountNonExpired(), sysUser.getCredentialsNonExpired(), sysUser.getAccountNonLocked(), grantedAuthorities);
     }
 }
+*/

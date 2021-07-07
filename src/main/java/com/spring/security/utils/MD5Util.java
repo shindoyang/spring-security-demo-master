@@ -22,4 +22,18 @@ public class MD5Util {
         }
 
     }
+
+    public static void main(String[] args) {
+        //1c1f4f0008c032a01dbb17bddaca9b7a
+        String password = "123456";
+
+        /*
+        原用户数据：
+        user1-(123456): $2a$10$47lsFAUlWixWG17Ca3M/r.EPJVIb7Tv26ZaxhzqN65nXVcAhHQM4i
+        user2-(123456): $2a$10$uSLAeON6HWrPbPCtyqPRj.hvZfeM.tiVDZm24/gRqm4opVze1cVvC
+         */
+
+        String reqPassword = MD5Util.getStringMD5("admission:" + password);
+        System.out.println(reqPassword);
+    }
 }

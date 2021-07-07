@@ -32,7 +32,7 @@
             <scope>test</scope>
         </dependency>
         <!-- spring-security -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
             <version>${spring.security.version}</version>
@@ -41,7 +41,7 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>${spring.security.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- Hikari连接池-->
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -137,6 +137,13 @@
             <!--  <scope>system</scope>
               <systemPath>${project.basedir}/lib/xy-cloud-sensitive-1.0.10.jar</systemPath>-->
         </dependency>
+        <!--引入JWT依赖-->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

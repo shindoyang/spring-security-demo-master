@@ -1,4 +1,5 @@
 package com.spring.security.config.handler;
+/*
 
 import com.alibaba.fastjson.JSON;
 import com.spring.security.common.entity.JsonResult;
@@ -12,11 +13,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+*/
 /**
  * @Author: Hutengfei
  * @Description: 会话信息过期策略
  * @Date Create in 2019/9/4 9:34
- */
+ *//*
+
 @Component
 public class CustomizeSessionInformationExpiredStrategy implements SessionInformationExpiredStrategy {
     @Override
@@ -27,3 +30,4 @@ public class CustomizeSessionInformationExpiredStrategy implements SessionInform
         httpServletResponse.getWriter().write(JSON.toJSONString(result));
     }
 }
+*/

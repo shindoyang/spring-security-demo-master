@@ -1,4 +1,5 @@
 package com.spring.security.config.handler;
+/*
 
 import com.alibaba.fastjson.JSON;
 import com.spring.security.common.entity.JsonResult;
@@ -12,11 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+*/
 /**
  * @Author: Hutengfei
  * @Description: 登出成功处理逻辑
  * @Date Create in 2019/9/4 10:17
- */
+ *//*
+
 @Component
 public class CustomizeLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
@@ -26,3 +29,4 @@ public class CustomizeLogoutSuccessHandler implements LogoutSuccessHandler {
         httpServletResponse.getWriter().write(JSON.toJSONString(result));
     }
 }
+*/
