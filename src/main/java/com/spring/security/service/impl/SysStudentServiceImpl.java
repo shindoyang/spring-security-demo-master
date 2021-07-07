@@ -30,6 +30,7 @@ public class SysStudentServiceImpl extends ServiceImpl<SysStudentMapper, SysStud
             wrapper.eq("account", userToolService.getLoginUser(request));
         }
         wrapper.eq("status", true);
+        wrapper.orderByDesc("click_time");
 
         IPage<SysStudent> userIPage = baseMapper.selectPage(page, wrapper);
         return userIPage;

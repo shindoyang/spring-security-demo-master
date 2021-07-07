@@ -64,7 +64,7 @@ public class UserController {
         return ResultTool.success(users);
     }
 
-    @GetMapping("/getUserByCode")
+    @GetMapping("/user/getUserByCode")
     public JsonResult test(String userCode) {
         if (null == userCode || Strings.isEmpty(userCode) || Strings.isBlank(userCode)) {
             return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
@@ -72,10 +72,11 @@ public class UserController {
 
         QueryWrapper<SysStudent> stuWrapper = new QueryWrapper<>();
         stuWrapper.eq("stu_uid", userCode);
+        stuWrapper.last("LIMIT 1");
         SysStudent one = sysStudentService.getOne(stuWrapper);
 
         //第一次获取要更新状态，否则只更新次数
-        if (!one.isStatus()) {
+        if (null == one.getStatus() || !one.getStatus()) {
             one.setStatus(true);
             one.setClickTime(new Date());
             one.setClickNums(1);
