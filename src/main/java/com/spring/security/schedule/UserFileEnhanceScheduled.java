@@ -9,11 +9,14 @@ import com.spring.security.config.AdmissionConfig;
 import com.spring.security.config.service.UserToolService;
 import com.spring.security.constant.RedisConstant;
 import com.spring.security.entity.NmsSmsTmplExcelVo;
+import com.spring.security.entity.SysStudent;
 import com.spring.security.entity.SysUserFile;
+import com.spring.security.service.SysStudentService;
 import com.spring.security.service.SysUserFileService;
 import com.spring.security.utils.IdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,10 +26,7 @@ import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -38,6 +38,9 @@ public class UserFileEnhanceScheduled {
 
     @Autowired
     SysUserFileService sysUserFileService;
+
+    @Autowired
+    SysStudentService sysStudentService;
 
     @Autowired
     UserToolService userToolService;
@@ -65,36 +68,41 @@ public class UserFileEnhanceScheduled {
             String tempFilePath = filePath + "_temp.xlsx";
             String finishFilePath = filePath + ".xlsx";
 
-            File file = new File(tempFilePath);
-            if (file != null) {
-                // 读取文件
-                StopWatch stopWatch = new StopWatch();
-                stopWatch.start();
-                List<NmsSmsTmplExcelVo> nmsFileList = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
-                stopWatch.stop();
-                log.info("读取文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
-                log.info("当前文件总行数：{}", null != nmsFileList ? nmsFileList.size() : 0);
+            try {
+                File file = new File(tempFilePath);
+                if (file != null) {
+                    // 读取文件
+                    StopWatch stopWatch = new StopWatch();
+                    stopWatch.start();
+                    List<NmsSmsTmplExcelVo> nmsFileList = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
+                    stopWatch.stop();
+                    log.info("读取文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                    log.info("当前文件总行数：{}", null != nmsFileList ? nmsFileList.size() : 0);
 
 
-                stopWatch.start();
-                List<NmsSmsTmplExcelVo> newList = setUrl(sysUserFile, nmsFileList);
-                stopWatch.stop();
-                log.info("添加短链耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                    stopWatch.start();
+                    List<NmsSmsTmplExcelVo> newList = setUrl(sysUserFile, nmsFileList);
+                    stopWatch.stop();
+                    log.info("添加短链耗时：{} 秒", stopWatch.getTotalTimeSeconds());
 
-                stopWatch.start();
-                EasyExcel.write(finishFilePath, NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(newList);
-                stopWatch.stop();
-                log.info("写文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                    stopWatch.start();
+                    EasyExcel.write(finishFilePath, NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(newList);
+                    stopWatch.stop();
+                    log.info("写文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                }
+                sysUserFile.setStatus(1);
+                sysUserFile.setUpdateTime(new Date());
+                sysUserFileService.updateById(sysUserFile);
+                log.info("文件：{}，处理完成！", sysUserFile.getFileName());
+
+            } catch (Exception e) {
+                log.error("文件：{}，处理失败：{}", sysUserFile.getFileName(), e.getMessage());
+                e.printStackTrace();
             }
-            sysUserFile.setStatus(1);
-            sysUserFileService.updateById(sysUserFile);
-            log.info("文件：{}，处理完成！", sysUserFile.getFileName());
         }
-
-
     }
 
-    private List<NmsSmsTmplExcelVo> setUrl(SysUserFile sysUserFile, List<NmsSmsTmplExcelVo> nmsFileList) {
+    private List<NmsSmsTmplExcelVo> setUrl(SysUserFile sysUserFile, List<NmsSmsTmplExcelVo> nmsFileList) throws Exception {
         //获取缓存的已经处理过的手机号
         String cacheMobileKey = String.format(RedisConstant.USER_CACHE_MOBILES, sysUserFile.getAccount());
         String cacheUidKey = String.format(RedisConstant.USER_CACHE_UIDS, sysUserFile.getAccount());
@@ -136,7 +144,7 @@ public class UserFileEnhanceScheduled {
         }
 
         //未处理的数据批量入库
-        batchSave(insertDBList);
+        batchSave(sysUserFile, insertDBList);
 
         //缓存本次处理内容
         stringRedisTemplate.opsForValue().set(cacheMobileKey, JSONObject.toJSONString(cacheMobileArr), uidExpireMinutes, TimeUnit.MINUTES);
@@ -147,8 +155,23 @@ public class UserFileEnhanceScheduled {
     /**
      * 批量入库
      */
-    public void batchSave(List<NmsSmsTmplExcelVo> insertDBList) {
+    public void batchSave(SysUserFile sysUserFile, List<NmsSmsTmplExcelVo> insertDBList) throws Exception {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        List<SysStudent> students = new ArrayList<>();
+        insertDBList.forEach(nmsRow -> {
+            SysStudent stu = new SysStudent();
+            BeanUtils.copyProperties(nmsRow, stu);
+            stu.setAccount(sysUserFile.getAccount());
+            students.add(stu);
+        });
 
+        boolean batchSaveSuccess = sysStudentService.saveBatch(students);
+        if (!batchSaveSuccess) {
+            throw new Exception("学生数据批量入库异常！");
+        }
+        stopWatch.stop();
+        log.info("学生数据批量入库耗时：{} 秒", stopWatch.getTotalTimeSeconds());
     }
 
 

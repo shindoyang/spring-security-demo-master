@@ -1,5 +1,6 @@
 package com.spring.security.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -21,8 +22,7 @@ public class SysUserFile implements Serializable {
     /**
      *
      */
-//    @TableId(type = IdType.AUTO)
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -49,87 +49,10 @@ public class SysUserFile implements Serializable {
      *
      */
     private Date createTime;
+    private Date updateTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * 账号
-     */
-    public String getAccount() {
-        return account;
-    }
-
-    /**
-     * 账号
-     */
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
-    /**
-     *
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     *
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    /**
-     *
-     */
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    /**
-     *
-     */
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
-
-    /**
-     *
-     */
-    public Integer getStatus() {
-        return status;
-    }
-
-    /**
-     *
-     */
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    /**
-     *
-     */
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     *
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 
     @Override
     public boolean equals(Object that) {
@@ -148,7 +71,8 @@ public class SysUserFile implements Serializable {
                 && (this.getFileName() == null ? other.getFileName() == null : this.getFileName().equals(other.getFileName()))
                 && (this.getFileUrl() == null ? other.getFileUrl() == null : this.getFileUrl().equals(other.getFileUrl()))
                 && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
     }
 
     @Override
@@ -161,6 +85,7 @@ public class SysUserFile implements Serializable {
         result = prime * result + ((getFileUrl() == null) ? 0 : getFileUrl().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         return result;
     }
 
@@ -176,6 +101,7 @@ public class SysUserFile implements Serializable {
         sb.append(", fileUrl=").append(fileUrl);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);
+        sb.append(", updateTime=").append(updateTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
