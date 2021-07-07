@@ -114,7 +114,9 @@ public class UserFileEnhanceScheduled {
         log.info("已缓存过的uid个数：{}", null != cacheUidMap ? cacheUidMap.size() : 0);
 
         IdWorker worker = new IdWorker(1, 1, 1);
-        List<NmsSmsTmplExcelVo> result = new ArrayList<>();
+        List<NmsSmsTmplExcelVo> writeFileDataList = new ArrayList<>();
+        List<NmsSmsTmplExcelVo> insertDBList = new ArrayList<>();
+
         for (NmsSmsTmplExcelVo vo : nmsFileList) {
             String uid = null;
             //如果手机号已处理过
@@ -126,18 +128,33 @@ public class UserFileEnhanceScheduled {
                 uid = String.valueOf(worker.nextId());
                 cacheMobileArr.add(vo.getMobile());
                 cacheUidMap.put(vo.getMobile(), uid);
+                insertDBList.add(vo);
             }
             //设置短链
             vo = setUrl(vo, uid);
-            result.add(vo);
+            writeFileDataList.add(vo);
         }
 
+        //未处理的数据批量入库
+        batchSave(insertDBList);
+
+        //缓存本次处理内容
         stringRedisTemplate.opsForValue().set(cacheMobileKey, JSONObject.toJSONString(cacheMobileArr), uidExpireMinutes, TimeUnit.MINUTES);
         stringRedisTemplate.opsForValue().set(cacheUidKey, JSONObject.toJSONString(cacheUidMap), uidExpireMinutes, TimeUnit.MINUTES);
-        return result;
+        return writeFileDataList;
+    }
+
+    /**
+     * 批量入库
+     */
+    public void batchSave(List<NmsSmsTmplExcelVo> insertDBList) {
+
     }
 
 
+    /**
+     * 给每行数据设置链接
+     */
     private NmsSmsTmplExcelVo setUrl(NmsSmsTmplExcelVo vo, String uid) {
         if (null == vo.getText1()) {
             vo.setText1(uid);
