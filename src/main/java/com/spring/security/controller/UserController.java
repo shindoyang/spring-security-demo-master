@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,18 @@ public class UserController {
         QueryWrapper<SysStudent> stuWrapper = new QueryWrapper<>();
         stuWrapper.eq("stu_uid", userCode);
         SysStudent one = sysStudentService.getOne(stuWrapper);
+
+        //第一次获取要更新状态，否则只更新次数
+        if (!one.isStatus()) {
+            one.setStatus(true);
+            one.setClickTime(new Date());
+            one.setClickNums(1);
+            one.setUpdateTime(new Date());
+        } else {
+            one.setClickNums(one.getClickNums() + 1);
+            one.setUpdateTime(new Date());
+        }
+        sysStudentService.updateById(one);
         return ResultTool.success(one);
     }
 }

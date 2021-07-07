@@ -88,7 +88,7 @@ public class SysStudent implements Serializable {
     private String text10;
 
     /**
-     * 是否点击访问链接
+     * 是否点击访问链接   0：未点击，1：已点击
      */
     private boolean status = false;
 

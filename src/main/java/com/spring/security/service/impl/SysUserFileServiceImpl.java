@@ -10,6 +10,8 @@ import com.spring.security.service.SysUserFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  *
  */
@@ -23,12 +25,12 @@ public class SysUserFileServiceImpl extends ServiceImpl<SysUserFileMapper, SysUs
     UserToolService userToolService;
 
     @Override
-    public Object findList(IPage<SysUserFile> page) {
+    public Object findList(HttpServletRequest request, IPage<SysUserFile> page) {
         QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
 
-        /*if (null != userToolService.getLoginUser()) {
-            wrapper.eq("account", userToolService.getLoginUser());
-        }*/
+        if (null != userToolService.getLoginUser(request)) {
+            wrapper.eq("account", userToolService.getLoginUser(request));
+        }
         IPage<SysUserFile> userIPage = baseMapper.selectPage(page, wrapper);
         return userIPage;
     }
