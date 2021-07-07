@@ -1,12 +1,16 @@
 package com.spring.security.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
+import com.spring.security.entity.SysStudent;
 import com.spring.security.entity.SysUser;
+import com.spring.security.service.SysStudentService;
 import com.spring.security.service.SysUserService;
 import com.spring.security.utils.JWTUtils;
 import com.spring.security.utils.MD5Util;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +30,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     SysUserService sysUserService;
+    @Autowired
+    SysStudentService sysStudentService;
 
     @PostMapping("/login")
     public JsonResult login(HttpServletResponse response, String username, String password) {
@@ -57,8 +63,15 @@ public class UserController {
         return ResultTool.success(users);
     }
 
-    @GetMapping("/test")
-    public JsonResult test() {
-        return ResultTool.success("hello world");
+    @GetMapping("/getUserByCode")
+    public JsonResult test(String userCode) {
+        if (null == userCode || Strings.isEmpty(userCode) || Strings.isBlank(userCode)) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+
+        QueryWrapper<SysStudent> stuWrapper = new QueryWrapper<>();
+        stuWrapper.eq("stu_uid", userCode);
+        SysStudent one = sysStudentService.getOne(stuWrapper);
+        return ResultTool.success(one);
     }
 }
