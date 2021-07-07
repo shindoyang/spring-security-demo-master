@@ -2,8 +2,6 @@ package com.spring.security.VO;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class FileRequestVO {
     private String fileId;
@@ -14,8 +12,8 @@ public class FileRequestVO {
 
     private Integer size;
 
-    private Date startTime;
+    private String startTime;
 
-    private Date endTime;
+    private String endTime;
 
 }

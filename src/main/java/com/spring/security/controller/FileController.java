@@ -56,7 +56,7 @@ public class FileController {
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
         IPage<SysUserFile> page = new Page<>(pageNo, pageSize);
-        Object list = sysUserFileService.findList(request, page);
+        Object list = sysUserFileService.findList(request, page, param);
         if (null != list) {
             return ResultTool.success(list);
         }
