@@ -8,9 +8,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.spring.security.config.AdmissionConfig;
 import com.spring.security.config.service.UserToolService;
 import com.spring.security.constant.RedisConstant;
-import com.spring.security.entity.NmsSmsTmplExcelVo;
-import com.spring.security.entity.SysStudent;
-import com.spring.security.entity.SysUserFile;
+import com.spring.security.entity.*;
+import com.spring.security.service.SysSchoolService;
 import com.spring.security.service.SysStudentService;
 import com.spring.security.service.SysUserFileService;
 import com.spring.security.utils.IdWorker;
@@ -43,6 +42,9 @@ public class UserFileEnhanceScheduled {
     SysStudentService sysStudentService;
 
     @Autowired
+    SysSchoolService sysSchoolService;
+
+    @Autowired
     UserToolService userToolService;
 
     @Resource
@@ -66,11 +68,20 @@ public class UserFileEnhanceScheduled {
                 int index = i + 1;
                 log.info("开始处理第 {} 条文件，内容：{}", index, JSON.toJSON(list));
                 SysUserFile sysUserFile = list.get(0);
-                String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
-                String tempFilePath = filePath + "_temp.xlsx";
-                String finishFilePath = filePath + ".xlsx";
-
                 try {
+                    //获取关联的学校信息
+                    QueryWrapper<SysSchool> schoolWrapper = new QueryWrapper<>();
+                    schoolWrapper.eq("account", 0);
+                    SysSchool sysSchool = sysSchoolService.getOne(schoolWrapper);
+                    if (null == sysSchool) {
+                        throw new Exception(sysUserFile.getAccount() + "未设置关联的学校信息！");
+                    }
+
+                    String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
+                    String tempFilePath = filePath + "_temp.xlsx";
+                    String finishFilePath = filePath + ".xlsx";
+
+
                     File file = new File(tempFilePath);
                     if (file != null) {
                         // 读取文件
@@ -83,7 +94,7 @@ public class UserFileEnhanceScheduled {
 
                         //添加短链
                         stopWatch.start();
-                        List<NmsSmsTmplExcelVo> newList = setUrl(sysUserFile, nmsFileList);
+                        List<NmsSmsTmplExcelVo> newList = setUrl(sysSchool, sysUserFile, nmsFileList);
                         stopWatch.stop();
                         log.info("添加短链耗时：{} 秒", stopWatch.getTotalTimeSeconds());
 
@@ -107,7 +118,7 @@ public class UserFileEnhanceScheduled {
         }
     }
 
-    private List<NmsSmsTmplExcelVo> setUrl(SysUserFile sysUserFile, List<NmsSmsTmplExcelVo> nmsFileList) throws Exception {
+    private List<NmsSmsTmplExcelVo> setUrl(SysSchool sysSchool, SysUserFile sysUserFile, List<NmsSmsTmplExcelVo> nmsFileList) throws Exception {
         //获取缓存的已经处理过的手机号
         String cacheMobileKey = String.format(RedisConstant.USER_CACHE_MOBILES, sysUserFile.getAccount());
         String cacheUidKey = String.format(RedisConstant.USER_CACHE_UIDS, sysUserFile.getAccount());
@@ -127,42 +138,49 @@ public class UserFileEnhanceScheduled {
         log.info("已缓存过的uid个数：{}", null != cacheUidMap ? cacheUidMap.size() : 0);
 
         IdWorker worker = new IdWorker(1, 1, 1);
-        List<NmsSmsTmplExcelVo> writeFileDataList = new ArrayList<>();
-        List<NmsSmsTmplExcelVo> insertDBList = new ArrayList<>();
+        List<NmsSmsTmplExcelVo> wholeExecelDataList = new ArrayList<>();
+        List<NmsSmsTmplDBVo> updateDBList = new ArrayList<>();
 
         for (NmsSmsTmplExcelVo vo : nmsFileList) {
             String uid = null;
-            //如果手机号已处理过
+            //缓存和数据库只处理增量的,excel文件要全量处理。保证同一个手机号每次生成的链接都是一样的
             if (null != cacheMobileArr && cacheMobileArr.contains(vo.getMobile())) {
                 if (null != cacheUidMap) {
                     uid = String.valueOf(cacheUidMap.get(vo.getMobile()));
+                    //设置短链
+                    vo = setUrl(sysSchool, vo, uid);
                 }
             } else {
-                long uid_long = worker.nextId();
-                uid = String.valueOf(uid_long);
+                uid = String.valueOf(worker.nextId());
+                //本次增量内容
                 cacheMobileArr.add(vo.getMobile());
                 cacheUidMap.put(vo.getMobile(), uid);
-                vo.setStu_uid(uid_long);
-                insertDBList.add(vo);
+                NmsSmsTmplDBVo dbVo = new NmsSmsTmplDBVo();
+                dbVo.setStu_uid(Long.valueOf(uid));
+
+                //设置短链
+                vo = setUrl(sysSchool, vo, uid);
+                BeanUtils.copyProperties(vo, dbVo);
+
+                updateDBList.add(dbVo);
             }
-            //设置短链
-            vo = setUrl(vo, uid);
-            writeFileDataList.add(vo);
+
+            wholeExecelDataList.add(vo);
         }
 
-        //未处理的数据批量入库
-        batchSave(sysUserFile, insertDBList);
+        //增量数据批量入库
+        batchSave(sysUserFile, updateDBList);
 
-        //缓存本次处理内容
+        //缓存增量更新
         stringRedisTemplate.opsForValue().set(cacheMobileKey, JSONObject.toJSONString(cacheMobileArr), uidExpireMinutes, TimeUnit.MINUTES);
         stringRedisTemplate.opsForValue().set(cacheUidKey, JSONObject.toJSONString(cacheUidMap), uidExpireMinutes, TimeUnit.MINUTES);
-        return writeFileDataList;
+        return wholeExecelDataList;
     }
 
     /**
      * 批量入库
      */
-    public void batchSave(SysUserFile sysUserFile, List<NmsSmsTmplExcelVo> insertDBList) throws Exception {
+    public void batchSave(SysUserFile sysUserFile, List<NmsSmsTmplDBVo> insertDBList) throws Exception {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         List<SysStudent> students = new ArrayList<>();
@@ -185,7 +203,11 @@ public class UserFileEnhanceScheduled {
     /**
      * 给每行数据设置链接
      */
-    private NmsSmsTmplExcelVo setUrl(NmsSmsTmplExcelVo vo, String uid) {
+    private NmsSmsTmplExcelVo setUrl(SysSchool sysSchool, NmsSmsTmplExcelVo vo, String uid) {
+        if (sysSchool != null) {
+            uid = sysSchool.getHost() + "/" + uid;
+        }
+
         if (null == vo.getText1()) {
             vo.setText1(uid);
             return vo;

@@ -88,6 +88,11 @@ public class SysStudent implements Serializable {
     private String text10;
 
     /**
+     * 是否点击访问链接
+     */
+    private boolean status = false;
+
+    /**
      * 第一次访问时间
      */
     private Date clickTime;
