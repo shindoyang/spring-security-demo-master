@@ -3,10 +3,13 @@ package com.spring.security.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.spring.security.VO.LinkRequestVO;
 import com.spring.security.config.service.UserToolService;
 import com.spring.security.dao.SysStudentMapper;
 import com.spring.security.entity.SysStudent;
 import com.spring.security.service.SysStudentService;
+import com.spring.security.utils.DateUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +26,17 @@ public class SysStudentServiceImpl extends ServiceImpl<SysStudentMapper, SysStud
     UserToolService userToolService;
 
     @Override
-    public Object findList(HttpServletRequest request, IPage<SysStudent> page) {
+    public Object findList(HttpServletRequest request, IPage<SysStudent> page, LinkRequestVO param) {
         QueryWrapper<SysStudent> wrapper = new QueryWrapper<>();
 
         if (null != userToolService.getLoginUser(request)) {
             wrapper.eq("account", userToolService.getLoginUser(request));
+        }
+        if (null != param.getMobile() && Strings.isNotEmpty(param.getMobile()) && Strings.isNotBlank(param.getMobile())) {
+            wrapper.eq("mobile", param.getMobile());
+        }
+        if (param.getStartTime() != null && param.getEndTime() != null && !param.getStartTime().equals("undefined") && !param.getEndTime().equals("undefined")) {
+            wrapper.between("click_time", DateUtils.getTimestamp(param.getStartTime()), DateUtils.getTimestamp(param.getEndTime()));
         }
         wrapper.eq("status", true);
         wrapper.orderByDesc("click_time");

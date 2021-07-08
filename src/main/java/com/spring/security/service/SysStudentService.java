@@ -2,6 +2,7 @@ package com.spring.security.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.spring.security.VO.LinkRequestVO;
 import com.spring.security.entity.SysStudent;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,5 +11,5 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public interface SysStudentService extends IService<SysStudent> {
-    Object findList(HttpServletRequest request, IPage<SysStudent> page);
+    Object findList(HttpServletRequest request, IPage<SysStudent> page, LinkRequestVO param);
 }

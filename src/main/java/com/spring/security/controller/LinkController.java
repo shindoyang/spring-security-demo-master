@@ -2,7 +2,7 @@ package com.spring.security.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.spring.security.VO.FileRequestVO;
+import com.spring.security.VO.LinkRequestVO;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
@@ -27,7 +27,7 @@ public class LinkController {
     SysStudentService sysStudentService;
 
     @GetMapping("/page")
-    public JsonResult findAll(HttpServletRequest request, FileRequestVO param) {
+    public JsonResult findAll(HttpServletRequest request, LinkRequestVO param) {
         //1、检查是否已登录
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
@@ -38,7 +38,7 @@ public class LinkController {
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
         IPage<SysStudent> page = new Page<>(pageNo, pageSize);
-        Object list = sysStudentService.findList(request, page);
+        Object list = sysStudentService.findList(request, page, param);
         if (null != list) {
             return ResultTool.success(list);
         }

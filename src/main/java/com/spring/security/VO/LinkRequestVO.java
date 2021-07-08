@@ -3,15 +3,12 @@ package com.spring.security.VO;
 import lombok.Data;
 
 @Data
-public class FileRequestVO {
-
+public class LinkRequestVO {
     private Integer page;
 
     private Integer size;
 
-    private String fileId;
-
-    private String fileName;
+    private String mobile;
 
     private String startTime;
 

@@ -34,7 +34,7 @@ public class SysUserFileServiceImpl extends ServiceImpl<SysUserFileMapper, SysUs
         if (null != userToolService.getLoginUser(request)) {
             wrapper.eq("account", userToolService.getLoginUser(request));
         }
-        if (null != param.getFileName() || Strings.isNotEmpty(param.getFileName()) || Strings.isNotBlank(param.getFileName())) {
+        if (null != param.getFileName() && Strings.isNotEmpty(param.getFileName()) && Strings.isNotBlank(param.getFileName())) {
             wrapper.eq("file_name", param.getFileName());
         }
         if (param.getStartTime() != null && param.getEndTime() != null && !param.getStartTime().equals("undefined") && !param.getEndTime().equals("undefined")) {
