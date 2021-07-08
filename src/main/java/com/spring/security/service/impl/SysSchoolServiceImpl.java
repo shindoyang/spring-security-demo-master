@@ -79,8 +79,7 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         SysUser sysUser = new SysUser();
         sysUser.setAccount(param.getAccount());
         sysUser.setUserName(param.getUsername());
-        String password = MD5Util.getStringMD5(param.getPassword());
-        String dbPassword = MD5Util.getStringMD5("admission:" + password);
+        String dbPassword = MD5Util.getStringMD5("admission:" + param.getPassword().trim());
         sysUser.setPassword(dbPassword);
         sysUser.setEnabled(true);
         sysUser.setAccountNonExpired(true);
