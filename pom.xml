@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.spring</groupId>
-    <artifactId>security</artifactId>
+    <artifactId>admission</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>security</name>
-    <description>测试spring-security工程</description>
+    <name>admission</name>
+    <description>录取通知书工程</description>
 
     <properties>
         <java.version>1.8</java.version>
