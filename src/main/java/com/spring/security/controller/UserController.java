@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spring.security.VO.SchoolRequestVO;
 import com.spring.security.VO.SchoolUpdateRequestVO;
 import com.spring.security.VO.UserRequestVO;
+import com.spring.security.VO.UserUpdateRequestVO;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
@@ -141,6 +142,42 @@ public class UserController {
         }
 
         return sysSchoolService.addSchool(request, param);
+    }
+
+    /**
+     * 更新账号信息
+     */
+    @PostMapping("/updateUser")
+    public JsonResult updateUser(HttpServletRequest request, @RequestBody UserUpdateRequestVO param) {
+        //1、检查是否已登录
+        if (!userToolService.checkUserlogin(request)) {
+            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
+        }
+
+        //参数校验
+        if (null == param.getId()) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+
+        SysUser sysUser = sysUserService.queryById(param.getId());
+        if (null == sysUser) {
+            return ResultTool.fail(ResultCode.FAIL_NO_USER_ERROR);
+        }
+
+        if (null != param.getAccount() && Strings.isNotEmpty(param.getAccount()) && Strings.isNotBlank(param.getAccount())) {
+            sysUser.setAccount(param.getAccount());
+        }
+        if (null != param.getUsername() && Strings.isNotEmpty(param.getUsername()) && Strings.isNotBlank(param.getUsername())) {
+            sysUser.setUserName(param.getUsername());
+        }
+        if (null != param.getPassword() && Strings.isNotEmpty(param.getPassword()) && Strings.isNotBlank(param.getPassword())) {
+            String password = MD5Util.getStringMD5("admission:" + param.getPassword().trim());
+            sysUser.setPassword(password);
+        }
+        sysUser.setUpdateTime(new Date());
+        sysUser.setUpdateUser(1);
+        sysUserService.update(sysUser);
+        return ResultTool.success();
     }
 
     /**
