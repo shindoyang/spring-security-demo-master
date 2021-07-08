@@ -47,7 +47,9 @@ public enum ResultCode {
     FAIL_FILE_DOWNLOAD_ERROR(4007, "文件下载异常！"),
     FAIL_NOT_EXIST(4008, "指定文件不存在！"),
     FAIL_MOBILE_ERROR(4009, "手机号非法！"),
-    FAIL_FILE_REPEAT_ERROR(4010, "您已上传过同名文件！");
+    FAIL_FILE_REPEAT_ERROR(4010, "您已上传过同名文件！"),
+    FAIL_USER_REPEAT_ERROR(4011, "已存在同名用户！"),
+    FAIL_SCHOOL_REPEAT_ERROR(4012, "已存在同名学校！");
 
     private Integer code;
     private String message;

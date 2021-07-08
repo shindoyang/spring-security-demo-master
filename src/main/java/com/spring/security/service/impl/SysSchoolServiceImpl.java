@@ -71,11 +71,26 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
             return ResultTool.fail(ResultCode.NO_PERMISSION);
         }
 
+        //参数校验
         if (null == param.getAccount() || null == param.getUsername() || null == param.getPassword()
                 || null == param.getSchoolName() || null == param.getHost()) {
             return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
         }
 
+        //判断用户是否重复注册
+        SysUser dbSysUser = sysUserService.selectByName(param.getAccount());
+        if (null != dbSysUser) {
+            return ResultTool.fail(ResultCode.FAIL_USER_REPEAT_ERROR);
+        }
+        //判断学校是否重复注册
+        QueryWrapper<SysSchool> wrapper = new QueryWrapper<>();
+        wrapper.eq("school_name", param.getSchoolName());
+        SysSchool dbSysSchool = sysSchoolService.getOne(wrapper);
+        if (null != dbSysSchool) {
+            return ResultTool.fail(ResultCode.FAIL_SCHOOL_REPEAT_ERROR);
+        }
+
+        //新增账号
         SysUser sysUser = new SysUser();
         sysUser.setAccount(param.getAccount());
         sysUser.setUserName(param.getUsername());
@@ -88,9 +103,9 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         sysUser.setCredentialsNonExpired(true);
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUser(1);
-
         sysUserService.insert(sysUser);
 
+        //新增学校
         SysSchool sysSchool = new SysSchool();
         sysSchool.setAccount(param.getAccount());
         sysSchool.setSchoolName(param.getSchoolName());
