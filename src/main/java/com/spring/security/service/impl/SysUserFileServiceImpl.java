@@ -37,7 +37,10 @@ public class SysUserFileServiceImpl extends ServiceImpl<SysUserFileMapper, SysUs
         if (null != param.getFileName() && Strings.isNotEmpty(param.getFileName()) && Strings.isNotBlank(param.getFileName())) {
             wrapper.like("file_name", param.getFileName());
         }
-        if (param.getStartTime() != null && param.getEndTime() != null && !param.getStartTime().equals("undefined") && !param.getEndTime().equals("undefined")) {
+        if (param.getStartTime() != null && param.getEndTime() != null
+                && !param.getStartTime().equals("undefined") && !param.getEndTime().equals("undefined")
+                && Strings.isNotEmpty(param.getStartTime()) && Strings.isNotBlank(param.getStartTime())
+                && Strings.isNotEmpty(param.getEndTime()) && Strings.isNotBlank(param.getEndTime())) {
             wrapper.between("create_time", DateUtils.getTimestamp(param.getStartTime()), DateUtils.getTimestamp(param.getEndTime()));
         }
 
