@@ -36,16 +36,16 @@ public class SysStudentServiceImpl extends ServiceImpl<SysStudentMapper, SysStud
             wrapper.eq("account", userToolService.getLoginUser(request));
         }
 
-        if (null != param.getMobile() || Strings.isNotBlank(param.getMobile()) || Strings.isNotEmpty(param.getMobile())) {
+        if (null != param.getMobile() && Strings.isNotEmpty(param.getMobile()) && Strings.isNotBlank(param.getMobile())) {
             if (!MobileUtil.isMobileNO(param.getMobile())) {
                 return ResultTool.fail(ResultCode.FAIL_MOBILE_ERROR);
             }
-        }
-
-        if (null != param.getMobile() && Strings.isNotEmpty(param.getMobile()) && Strings.isNotBlank(param.getMobile())) {
             wrapper.eq("mobile", param.getMobile());
         }
-        if (param.getStartTime() != null && param.getEndTime() != null && !param.getStartTime().equals("undefined") && !param.getEndTime().equals("undefined")) {
+        if (param.getStartTime() != null && param.getEndTime() != null
+                && !param.getStartTime().equals("undefined") && !param.getEndTime().equals("undefined")
+                && Strings.isNotEmpty(param.getStartTime()) && Strings.isNotBlank(param.getStartTime())
+                && Strings.isNotEmpty(param.getEndTime()) && Strings.isNotBlank(param.getEndTime())) {
             wrapper.between("click_time", DateUtils.getTimestamp(param.getStartTime()), DateUtils.getTimestamp(param.getEndTime()));
         }
         wrapper.eq("status", true);
