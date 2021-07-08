@@ -49,7 +49,9 @@ public enum ResultCode {
     FAIL_MOBILE_ERROR(4009, "手机号非法！"),
     FAIL_FILE_REPEAT_ERROR(4010, "您已上传过同名文件！"),
     FAIL_USER_REPEAT_ERROR(4011, "已存在同名用户！"),
-    FAIL_SCHOOL_REPEAT_ERROR(4012, "已存在同名学校！");
+    FAIL_SCHOOL_REPEAT_ERROR(4012, "已存在同名学校！"),
+    FAIL_NO_USER_ERROR(4013, "未找到对应账号！"),
+    FAIL_NO_SCHOOL_ERROR(4014, "未找到对应学校！");
 
     private Integer code;
     private String message;

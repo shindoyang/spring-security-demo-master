@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spring.security.VO.SchoolRequestVO;
+import com.spring.security.VO.SchoolUpdateRequestVO;
 import com.spring.security.VO.UserRequestVO;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
@@ -98,12 +99,18 @@ public class UserController {
 
     //============================ 管理员接口 =============================
 
+    /**
+     * 获取所有账号信息
+     */
     @GetMapping("/getUser")
     public JsonResult getUser() {
         List<SysUser> users = sysUserService.queryAllByLimit(1, 100);
         return ResultTool.success(users);
     }
 
+    /**
+     * 获取所有学校信息，可过滤
+     */
     @GetMapping("/getSchool")
     public JsonResult getSchool(HttpServletRequest request, SchoolRequestVO param) {
         //1、检查是否已登录
@@ -123,6 +130,9 @@ public class UserController {
         return ResultTool.success(list);
     }
 
+    /**
+     * 新建账号、学校信息
+     */
     @PostMapping("/createUser")
     public JsonResult createUser(HttpServletRequest request, @RequestBody UserRequestVO param) {
         //1、检查是否已登录
@@ -131,6 +141,19 @@ public class UserController {
         }
 
         return sysSchoolService.addSchool(request, param);
+    }
+
+    /**
+     * 更新学校信息
+     */
+    @PostMapping("/updateSchool")
+    public JsonResult updateSchool(HttpServletRequest request, @RequestBody SchoolUpdateRequestVO param) {
+        //1、检查是否已登录
+        if (!userToolService.checkUserlogin(request)) {
+            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
+        }
+
+        return sysSchoolService.updateSchool(request, param);
     }
 
 }

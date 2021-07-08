@@ -16,7 +16,7 @@ public class SysSchool implements Serializable {
      * 主键id
      */
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /**
      * 学校名
@@ -36,17 +36,11 @@ public class SysSchool implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键id
-     */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    /**
-     * 主键id
-     */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

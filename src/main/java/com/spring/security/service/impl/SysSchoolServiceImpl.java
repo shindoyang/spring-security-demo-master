@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spring.security.VO.SchoolRequestVO;
+import com.spring.security.VO.SchoolUpdateRequestVO;
 import com.spring.security.VO.UserRequestVO;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
@@ -111,6 +112,38 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         sysSchool.setSchoolName(param.getSchoolName());
         sysSchool.setHost(param.getHost());
         sysSchoolService.save(sysSchool);
+
+        return ResultTool.success();
+    }
+
+    @Override
+    public JsonResult updateSchool(HttpServletRequest request, SchoolUpdateRequestVO param) {
+        if (!"admin".equals(userToolService.getLoginUser(request))) {
+            return ResultTool.fail(ResultCode.NO_PERMISSION);
+        }
+
+        //参数校验
+        if (null == param.getId()) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+
+        QueryWrapper<SysSchool> wrapper = new QueryWrapper<>();
+        wrapper.eq("id", param.getId());
+        SysSchool dbSysSchool = sysSchoolService.getOne(wrapper);
+        if (null == dbSysSchool) {
+            return ResultTool.fail(ResultCode.FAIL_NO_SCHOOL_ERROR);
+        }
+
+        if (null != param.getAccount() && Strings.isNotEmpty(param.getAccount()) && Strings.isNotBlank(param.getAccount())) {
+            dbSysSchool.setAccount(param.getAccount());
+        }
+        if (null != param.getSchoolName() && Strings.isNotEmpty(param.getSchoolName()) && Strings.isNotBlank(param.getSchoolName())) {
+            dbSysSchool.setSchoolName(param.getSchoolName());
+        }
+        if (null != param.getHost() && Strings.isNotEmpty(param.getHost()) && Strings.isNotBlank(param.getHost())) {
+            dbSysSchool.setHost(param.getHost());
+        }
+        sysSchoolService.updateById(dbSysSchool);
 
         return ResultTool.success();
     }
