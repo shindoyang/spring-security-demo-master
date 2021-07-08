@@ -32,7 +32,7 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         QueryWrapper<SysSchool> wrapper = new QueryWrapper<>();
 
         if (null != userToolService.getLoginUser(request)) {
-            if ("admin".equals(userToolService.getLoginUser(request))) {
+            if (!"admin".equals(userToolService.getLoginUser(request))) {
                 return ResultTool.fail(ResultCode.NO_PERMISSION);
             }
         }
