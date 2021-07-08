@@ -111,6 +111,7 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         sysSchool.setAccount(param.getAccount());
         sysSchool.setSchoolName(param.getSchoolName());
         sysSchool.setHost(param.getHost());
+        sysSchool.setCreateTime(new Date());
         sysSchoolService.save(sysSchool);
 
         return ResultTool.success();
@@ -143,6 +144,7 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         if (null != param.getHost() && Strings.isNotEmpty(param.getHost()) && Strings.isNotBlank(param.getHost())) {
             dbSysSchool.setHost(param.getHost());
         }
+        dbSysSchool.setUpdateTime(new Date());
         sysSchoolService.updateById(dbSysSchool);
 
         return ResultTool.success();
