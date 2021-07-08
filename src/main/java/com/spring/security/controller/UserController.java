@@ -1,11 +1,17 @@
 package com.spring.security.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.spring.security.VO.SchoolRequestVO;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
+import com.spring.security.config.service.UserToolService;
+import com.spring.security.entity.SysSchool;
 import com.spring.security.entity.SysStudent;
 import com.spring.security.entity.SysUser;
+import com.spring.security.service.SysSchoolService;
 import com.spring.security.service.SysStudentService;
 import com.spring.security.service.SysUserService;
 import com.spring.security.utils.JWTUtils;
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +40,10 @@ public class UserController {
     SysUserService sysUserService;
     @Autowired
     SysStudentService sysStudentService;
+    @Autowired
+    SysSchoolService sysSchoolService;
+    @Autowired
+    UserToolService userToolService;
 
     @PostMapping("/login")
     public JsonResult login(HttpServletResponse response, String username, String password) {
@@ -89,6 +100,25 @@ public class UserController {
     public JsonResult getUser() {
         List<SysUser> users = sysUserService.queryAllByLimit(1, 100);
         return ResultTool.success(users);
+    }
+
+    @GetMapping("/getSchool")
+    public JsonResult findAll(HttpServletRequest request, SchoolRequestVO param) {
+        //1、检查是否已登录
+        if (!userToolService.checkUserlogin(request)) {
+            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
+        }
+
+        //获取前台发送过来的数据
+        Integer pageNo = param.getPage();
+        Integer pageSize = param.getSize();
+        if (null == pageNo || null == pageSize) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+
+        IPage<SysSchool> page = new Page<>(pageNo, pageSize);
+        Object list = sysSchoolService.findList(request, page, param);
+        return ResultTool.success(list);
     }
 
 }
