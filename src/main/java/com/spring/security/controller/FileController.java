@@ -57,10 +57,7 @@ public class FileController {
         Integer pageSize = param.getSize();
         IPage<SysUserFile> page = new Page<>(pageNo, pageSize);
         Object list = sysUserFileService.findList(request, page, param);
-        if (null != list) {
-            return ResultTool.success(list);
-        }
-        return ResultTool.success();
+        return ResultTool.success(list);
     }
 
     /**
@@ -77,8 +74,7 @@ public class FileController {
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
         }
-        fileUploadService.getDownloadData(request, response, param);
-        return ResultTool.success();
+        return fileUploadService.getDownloadData(request, response, param);
     }
 
 }

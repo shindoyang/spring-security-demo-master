@@ -24,8 +24,9 @@ public class MD5Util {
     }
 
     public static void main(String[] args) {
-        //1c1f4f0008c032a01dbb17bddaca9b7a
-        String password = "123456";
+        //123456  --- 1c1f4f0008c032a01dbb17bddaca9b7a
+        //admin   --- 6607f51871353c72ad66bfcb21635565
+        String password = "admin";
 
         /*
         原用户数据：

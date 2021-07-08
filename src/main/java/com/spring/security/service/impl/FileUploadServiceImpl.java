@@ -120,6 +120,10 @@ public class FileUploadServiceImpl implements FileUploadService {
             wrapper.eq("id", param.getFileId());
             SysUserFile sysUserFile = sysUserFileService.getOne(wrapper);
 
+            if (null == sysUserFile) {
+                return ResultTool.fail(ResultCode.FAIL_NOT_EXIST);
+            }
+
             //校验当前用户是否有该文件的操作权限
             String loginUser = userToolService.getLoginUser(request);
             if (null != sysUserFile && loginUser != null && !loginUser.equals(sysUserFile.getAccount())) {
