@@ -46,7 +46,8 @@ public enum ResultCode {
     FAIL_NO_FILE_AUTH(4006, "您无权操作该文件！"),
     FAIL_FILE_DOWNLOAD_ERROR(4007, "文件下载异常！"),
     FAIL_NOT_EXIST(4008, "指定文件不存在！"),
-    FAIL_MOBILE_ERROR(4009, "手机号非法！");
+    FAIL_MOBILE_ERROR(4009, "手机号非法！"),
+    FAIL_FILE_REPEAT_ERROR(4010, "您已上传过同名文件！");
 
     private Integer code;
     private String message;

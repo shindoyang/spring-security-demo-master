@@ -47,9 +47,6 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     @Override
     public JsonResult uploadFile(HttpServletRequest request, MultipartFile file, FileRequestVO param) {
-
-        //todo 文件重复上传校验
-
         //1、文件保存
         File saveFile = null;
         if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())) {
@@ -59,6 +56,14 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
             String originalFilename = file.getOriginalFilename();
             log.info("originalFilename = " + originalFilename);
+
+            QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
+            wrapper.eq("file_name", originalFilename);
+            wrapper.eq("account", userToolService.getLoginUser(request));
+            SysUserFile dbsysUserFile = sysUserFileService.getOne(wrapper);
+            if (null != dbsysUserFile) {
+                return ResultTool.fail(ResultCode.FAIL_FILE_REPEAT_ERROR);
+            }
 
             // 临时文件名
             String fileName = IdUtils.randomUUID();
