@@ -36,8 +36,10 @@ public class SysStudentServiceImpl extends ServiceImpl<SysStudentMapper, SysStud
             wrapper.eq("account", userToolService.getLoginUser(request));
         }
 
-        if (!MobileUtil.isMobileNO(param.getMobile())) {
-            return ResultTool.fail(ResultCode.FAIL_MOBILE_ERROR);
+        if (null != param.getMobile() || Strings.isNotBlank(param.getMobile()) || Strings.isNotEmpty(param.getMobile())) {
+            if (!MobileUtil.isMobileNO(param.getMobile())) {
+                return ResultTool.fail(ResultCode.FAIL_MOBILE_ERROR);
+            }
         }
 
         if (null != param.getMobile() && Strings.isNotEmpty(param.getMobile()) && Strings.isNotBlank(param.getMobile())) {

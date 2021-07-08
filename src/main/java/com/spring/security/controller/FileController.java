@@ -54,6 +54,9 @@ public class FileController {
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
+        if (null == pageNo || null == pageSize) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
         IPage<SysUserFile> page = new Page<>(pageNo, pageSize);
         Object list = sysUserFileService.findList(request, page, param);
         return ResultTool.success(list);

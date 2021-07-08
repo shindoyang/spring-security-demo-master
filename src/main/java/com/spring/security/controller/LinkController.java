@@ -36,11 +36,12 @@ public class LinkController {
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
+        if (null == pageNo || null == pageSize) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+
         IPage<SysStudent> page = new Page<>(pageNo, pageSize);
         Object list = sysStudentService.findList(request, page, param);
-        if (null != list) {
-            return ResultTool.success(list);
-        }
-        return ResultTool.success();
+        return ResultTool.success(list);
     }
 }
