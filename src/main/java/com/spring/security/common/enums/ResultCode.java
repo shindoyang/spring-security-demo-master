@@ -45,7 +45,8 @@ public enum ResultCode {
     FAIL_TEMPLATE_ERROR(4005, "请使用普通消息模板上传或检查首列手机号是否正确！"),
     FAIL_NO_FILE_AUTH(4006, "您无权操作该文件！"),
     FAIL_FILE_DOWNLOAD_ERROR(4007, "文件下载异常！"),
-    FAIL_NOT_EXIST(4008, "指定文件不存在！");
+    FAIL_NOT_EXIST(4008, "指定文件不存在！"),
+    FAIL_MOBILE_ERROR(4009, "手机号非法！");
 
     private Integer code;
     private String message;

@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spring.security.VO.LinkRequestVO;
+import com.spring.security.common.enums.ResultCode;
+import com.spring.security.common.utils.ResultTool;
 import com.spring.security.config.service.UserToolService;
 import com.spring.security.dao.SysStudentMapper;
 import com.spring.security.entity.SysStudent;
 import com.spring.security.service.SysStudentService;
 import com.spring.security.utils.DateUtils;
+import com.spring.security.utils.MobileUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,11 @@ public class SysStudentServiceImpl extends ServiceImpl<SysStudentMapper, SysStud
         if (null != userToolService.getLoginUser(request)) {
             wrapper.eq("account", userToolService.getLoginUser(request));
         }
+
+        if (!MobileUtil.isMobileNO(param.getMobile())) {
+            return ResultTool.fail(ResultCode.FAIL_MOBILE_ERROR);
+        }
+
         if (null != param.getMobile() && Strings.isNotEmpty(param.getMobile()) && Strings.isNotBlank(param.getMobile())) {
             wrapper.eq("mobile", param.getMobile());
         }

@@ -10,5 +10,5 @@ import javax.servlet.http.HttpServletResponse;
 public interface FileUploadService {
     JsonResult uploadFile(HttpServletRequest request, MultipartFile file, FileRequestVO param);
 
-    JsonResult getDownloadData(HttpServletRequest request, HttpServletResponse response, FileRequestVO param);
+    JsonResult getDownloadData(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) throws Exception;
 }

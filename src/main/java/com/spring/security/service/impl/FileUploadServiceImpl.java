@@ -113,7 +113,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public JsonResult getDownloadData(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) {
+    public JsonResult getDownloadData(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) throws Exception {
 
         try {
             QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
@@ -121,13 +121,13 @@ public class FileUploadServiceImpl implements FileUploadService {
             SysUserFile sysUserFile = sysUserFileService.getOne(wrapper);
 
             if (null == sysUserFile) {
-                return ResultTool.fail(ResultCode.FAIL_NOT_EXIST);
+                throw new Exception(ResultCode.FAIL_NOT_EXIST.getMessage());
             }
 
             //校验当前用户是否有该文件的操作权限
             String loginUser = userToolService.getLoginUser(request);
             if (null != sysUserFile && loginUser != null && !loginUser.equals(sysUserFile.getAccount())) {
-                return ResultTool.fail(ResultCode.FAIL_NO_FILE_AUTH);
+                throw new Exception(ResultCode.FAIL_NO_FILE_AUTH.getMessage());
             }
 
             String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
@@ -146,7 +146,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             EasyExcel.write(response.getOutputStream(), NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(nmsFileList);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResultTool.fail(ResultCode.FAIL_FILE_DOWNLOAD_ERROR);
+            throw new Exception(ResultCode.FAIL_FILE_DOWNLOAD_ERROR.getMessage());
         }
 
         return null;

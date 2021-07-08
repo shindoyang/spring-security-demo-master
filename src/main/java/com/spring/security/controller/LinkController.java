@@ -32,7 +32,6 @@ public class LinkController {
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
         }
-        String loginUser = userToolService.getLoginUser(request);
 
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();

@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/file")
@@ -70,11 +69,11 @@ public class FileController {
      * 3. 直接写，这里注意，finish的时候会自动关闭OutputStream,当然你外面再关闭流问题不大
      */
     @GetMapping("download")
-    public JsonResult download(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) throws IOException {
+    public void download(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) throws Exception {
         if (!userToolService.checkUserlogin(request)) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
+            throw new Exception(ResultCode.USER_NOT_LOGIN.getMessage());
         }
-        return fileUploadService.getDownloadData(request, response, param);
+        fileUploadService.getDownloadData(request, response, param);
     }
 
 }
