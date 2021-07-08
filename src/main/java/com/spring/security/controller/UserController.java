@@ -58,12 +58,6 @@ public class UserController {
         return ResultTool.success(result);
     }
 
-    @GetMapping("/getUser")
-    public JsonResult getUser() {
-        List<SysUser> users = sysUserService.queryAllByLimit(1, 100);
-        return ResultTool.success(users);
-    }
-
     @GetMapping("/user/getUserByCode")
     public JsonResult test(String userCode) {
         if (null == userCode || Strings.isEmpty(userCode) || Strings.isBlank(userCode)) {
@@ -88,4 +82,13 @@ public class UserController {
         sysStudentService.updateById(one);
         return ResultTool.success(one);
     }
+
+    //============================ 管理员接口 =============================
+
+    @GetMapping("/getUser")
+    public JsonResult getUser() {
+        List<SysUser> users = sysUserService.queryAllByLimit(1, 100);
+        return ResultTool.success(users);
+    }
+
 }

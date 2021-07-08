@@ -12,21 +12,67 @@ schedule:
 spring:
   application:
     name: admission
+  #  datasource:
+  #    type: com.zaxxer.hikari.HikariDataSource
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+  #    url: jdbc:mysql://10.0.81.212:3306/spring_security?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=CTT
+  #    username: root
+  #    password: 123456
+  #    hikari:
+  #      minimum-idle: 5
+  #      idle-timeout: 600000
+  #      maximum-pool-size: 10
+  #      auto-commit: true
+  #      pool-name: MyHikariCP
+  #      max-lifetime: 1800000
+  #      connection-timeout: 30000
+  #      connection-test-query: SELECT 1
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.0.81.212:3306/spring_security?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=CTT
-    username: root
-    password: 123456
-    hikari:
-      minimum-idle: 5
-      idle-timeout: 600000
-      maximum-pool-size: 10
-      auto-commit: true
-      pool-name: MyHikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      connection-test-query: SELECT 1
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    druid:
+      url: jdbc:mysql://10.0.81.212:3306/spring_security?useUnicode=true&characterEncoding=utf8&tinyInt1isBit=false&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      username: root
+      password: 123456
+      # 初始连接数
+      initialSize: 8
+      # 最小连接池数量
+      minIdle: 16
+      # 最大连接池数量
+      maxActive: 64
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      webStatFilter:
+        enabled: true
+      statViewServlet:
+        enabled: true
+        # 设置白名单，不填则允许所有访问
+        allow:
+        url-pattern: /druid/*
+        # 控制台管理用户名和密码
+        login-username:
+        login-password:
+      filter:
+        stat:
+          enabled: true
+          # 慢SQL记录
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
+        wall:
+          config:
+            multi-statement-allow: true
   #redis 配置
   redis:
     database: 0
