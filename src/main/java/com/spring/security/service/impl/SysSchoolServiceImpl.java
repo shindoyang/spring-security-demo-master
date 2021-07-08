@@ -4,18 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.spring.security.VO.SchoolRequestVO;
+import com.spring.security.VO.UserRequestVO;
+import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
 import com.spring.security.config.service.UserToolService;
 import com.spring.security.dao.SysSchoolMapper;
 import com.spring.security.entity.SysSchool;
+import com.spring.security.entity.SysUser;
 import com.spring.security.service.SysSchoolService;
+import com.spring.security.service.SysUserService;
 import com.spring.security.utils.DateUtils;
+import com.spring.security.utils.MD5Util;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  *
@@ -26,6 +33,10 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
 
     @Autowired
     UserToolService userToolService;
+    @Autowired
+    SysUserService sysUserService;
+    @Autowired
+    SysSchoolService sysSchoolService;
 
     @Override
     public Object findList(HttpServletRequest request, IPage<SysSchool> page, SchoolRequestVO param) {
@@ -51,6 +62,43 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
 
         IPage<SysSchool> userIPage = baseMapper.selectPage(page, wrapper);
         return userIPage;
+    }
+
+    @Override
+    @Transactional
+    public JsonResult addSchool(HttpServletRequest request, UserRequestVO param) {
+        if (!"admin".equals(userToolService.getLoginUser(request))) {
+            return ResultTool.fail(ResultCode.NO_PERMISSION);
+        }
+
+        if (null == param.getAccount() || null == param.getUsername() || null == param.getPassword()
+                || null == param.getSchoolName() || null == param.getHost()) {
+            return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
+        }
+
+        SysUser sysUser = new SysUser();
+        sysUser.setAccount(param.getAccount());
+        sysUser.setUserName(param.getUsername());
+        String password = MD5Util.getStringMD5(param.getPassword());
+        String dbPassword = MD5Util.getStringMD5("admission:" + password);
+        sysUser.setPassword(dbPassword);
+        sysUser.setEnabled(true);
+        sysUser.setAccountNonExpired(true);
+        sysUser.setAccountNonExpired(true);
+        sysUser.setAccountNonLocked(true);
+        sysUser.setCredentialsNonExpired(true);
+        sysUser.setCreateTime(new Date());
+        sysUser.setCreateUser(1);
+
+        sysUserService.insert(sysUser);
+
+        SysSchool sysSchool = new SysSchool();
+        sysSchool.setAccount(param.getAccount());
+        sysSchool.setSchoolName(param.getSchoolName());
+        sysSchool.setHost(param.getHost());
+        sysSchoolService.save(sysSchool);
+
+        return ResultTool.success();
     }
 }
 

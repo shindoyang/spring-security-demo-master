@@ -4,18 +4,18 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 
 /**
- * 
  * @TableName sys_school
  */
-@TableName(value ="sys_school")
+@TableName(value = "sys_school")
 public class SysSchool implements Serializable {
     /**
      * 主键id
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -105,9 +105,9 @@ public class SysSchool implements Serializable {
         }
         SysSchool other = (SysSchool) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getSchoolName() == null ? other.getSchoolName() == null : this.getSchoolName().equals(other.getSchoolName()))
-            && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
-            && (this.getHost() == null ? other.getHost() == null : this.getHost().equals(other.getHost()));
+                && (this.getSchoolName() == null ? other.getSchoolName() == null : this.getSchoolName().equals(other.getSchoolName()))
+                && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
+                && (this.getHost() == null ? other.getHost() == null : this.getHost().equals(other.getHost()));
     }
 
     @Override

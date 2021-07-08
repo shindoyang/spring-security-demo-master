@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.spring.security.VO.SchoolRequestVO;
+import com.spring.security.VO.UserRequestVO;
 import com.spring.security.common.entity.JsonResult;
 import com.spring.security.common.enums.ResultCode;
 import com.spring.security.common.utils.ResultTool;
@@ -20,6 +21,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,7 +105,7 @@ public class UserController {
     }
 
     @GetMapping("/getSchool")
-    public JsonResult findAll(HttpServletRequest request, SchoolRequestVO param) {
+    public JsonResult getSchool(HttpServletRequest request, SchoolRequestVO param) {
         //1、检查是否已登录
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
@@ -119,6 +121,16 @@ public class UserController {
         IPage<SysSchool> page = new Page<>(pageNo, pageSize);
         Object list = sysSchoolService.findList(request, page, param);
         return ResultTool.success(list);
+    }
+
+    @PostMapping("/createUser")
+    public JsonResult createUser(HttpServletRequest request, @RequestBody UserRequestVO param) {
+        //1、检查是否已登录
+        if (!userToolService.checkUserlogin(request)) {
+            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
+        }
+
+        return sysSchoolService.addSchool(request, param);
     }
 
 }
