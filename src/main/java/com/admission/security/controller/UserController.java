@@ -1,24 +1,25 @@
 package com.admission.security.controller;
 
 import com.admission.security.VO.SchoolRequestVO;
-import com.admission.security.VO.UserRequestVO;
-import com.admission.security.config.service.UserToolService;
-import com.admission.security.utils.JWTUtils;
-import com.admission.security.utils.MD5Util;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.admission.security.VO.SchoolUpdateRequestVO;
+import com.admission.security.VO.UserRequestVO;
 import com.admission.security.VO.UserUpdateRequestVO;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
+import com.admission.security.config.service.UserToolService;
 import com.admission.security.entity.SysSchool;
 import com.admission.security.entity.SysStudent;
 import com.admission.security.entity.SysUser;
 import com.admission.security.service.SysSchoolService;
 import com.admission.security.service.SysStudentService;
 import com.admission.security.service.SysUserService;
+import com.admission.security.utils.JWTUtils;
+import com.admission.security.utils.MD5Util;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ import java.util.Map;
  * @Description:
  * @Date Create in 2019/8/28 19:34
  */
+@Slf4j
 @RestController
 public class UserController {
     @Autowired
@@ -75,6 +77,7 @@ public class UserController {
 
     @GetMapping("/user/getUserByCode")
     public JsonResult test(String userCode) {
+
         if (null == userCode || Strings.isEmpty(userCode) || Strings.isBlank(userCode)) {
             return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
         }
@@ -118,6 +121,7 @@ public class UserController {
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
         }
+        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/getSchool 学校信息接口");
 
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
@@ -140,7 +144,7 @@ public class UserController {
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
         }
-
+        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/createUser 创建账号接口");
         return sysSchoolService.addSchool(request, param);
     }
 
@@ -153,6 +157,7 @@ public class UserController {
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
         }
+        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/updateUser 更新账号接口");
 
         //参数校验
         if (null == param.getId()) {
@@ -189,6 +194,7 @@ public class UserController {
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
         }
+        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/updateSchool 更新学校信息接口");
 
         return sysSchoolService.updateSchool(request, param);
     }
