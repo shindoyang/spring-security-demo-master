@@ -1,20 +1,20 @@
 package com.admission.security.service.impl;
 
-import com.admission.security.config.service.UserToolService;
-import com.admission.security.entity.NmsSmsTmplExcelVo;
-import com.admission.security.entity.SysUserFile;
-import com.alibaba.excel.EasyExcel;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.mfexcel.sensitive.engine.SensitiveEngine;
 import com.admission.security.VO.FileRequestVO;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
 import com.admission.security.config.AdmissionConfig;
+import com.admission.security.config.service.UserToolService;
+import com.admission.security.entity.NmsSmsTmplExcelVo;
+import com.admission.security.entity.SysUserFile;
 import com.admission.security.service.FileUploadService;
 import com.admission.security.utils.FileUtils;
 import com.admission.security.utils.IdUtils;
 import com.admission.security.utils.MobileUtil;
+import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mfexcel.sensitive.engine.SensitiveEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +54,12 @@ public class FileUploadServiceImpl implements FileUploadService {
             if (!file.getOriginalFilename().toLowerCase().endsWith(".xlsx")) {
                 return ResultTool.fail(ResultCode.FAIL_ERROR);
             }
+
             String originalFilename = file.getOriginalFilename();
             log.info("originalFilename = " + originalFilename);
+            if (originalFilename.length() > 150) {
+                return ResultTool.fail(ResultCode.FAIL_LENGTH_OVER_ERROR);
+            }
 
             QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
             wrapper.eq("file_name", originalFilename);

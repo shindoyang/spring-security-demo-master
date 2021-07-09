@@ -4,17 +4,19 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
  * @TableName sys_student
  */
-@TableName(value ="sys_student")
+@TableName(value = "sys_student")
 public class SysStudent implements Serializable {
     /**
-     * 
+     *
      */
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -25,7 +27,7 @@ public class SysStudent implements Serializable {
     private String account;
 
     /**
-     * 
+     *
      */
     private Long stuUid;
 
@@ -92,16 +94,22 @@ public class SysStudent implements Serializable {
     /**
      * 第一次访问时间
      */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date clickTime;
 
     /**
      * 点击次数
      */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Integer clickNums;
 
     /**
      * 创建时间
      */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -113,14 +121,14 @@ public class SysStudent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * 
+     *
      */
     public void setId(Long id) {
         this.id = id;
@@ -141,14 +149,14 @@ public class SysStudent implements Serializable {
     }
 
     /**
-     * 
+     *
      */
     public Long getStuUid() {
         return stuUid;
     }
 
     /**
-     * 
+     *
      */
     public void setStuUid(Long stuUid) {
         this.stuUid = stuUid;
@@ -391,24 +399,24 @@ public class SysStudent implements Serializable {
         }
         SysStudent other = (SysStudent) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
-            && (this.getStuUid() == null ? other.getStuUid() == null : this.getStuUid().equals(other.getStuUid()))
-            && (this.getMobile() == null ? other.getMobile() == null : this.getMobile().equals(other.getMobile()))
-            && (this.getText1() == null ? other.getText1() == null : this.getText1().equals(other.getText1()))
-            && (this.getText2() == null ? other.getText2() == null : this.getText2().equals(other.getText2()))
-            && (this.getText3() == null ? other.getText3() == null : this.getText3().equals(other.getText3()))
-            && (this.getText4() == null ? other.getText4() == null : this.getText4().equals(other.getText4()))
-            && (this.getText5() == null ? other.getText5() == null : this.getText5().equals(other.getText5()))
-            && (this.getText6() == null ? other.getText6() == null : this.getText6().equals(other.getText6()))
-            && (this.getText7() == null ? other.getText7() == null : this.getText7().equals(other.getText7()))
-            && (this.getText8() == null ? other.getText8() == null : this.getText8().equals(other.getText8()))
-            && (this.getText9() == null ? other.getText9() == null : this.getText9().equals(other.getText9()))
-            && (this.getText10() == null ? other.getText10() == null : this.getText10().equals(other.getText10()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getClickTime() == null ? other.getClickTime() == null : this.getClickTime().equals(other.getClickTime()))
-            && (this.getClickNums() == null ? other.getClickNums() == null : this.getClickNums().equals(other.getClickNums()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
+                && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
+                && (this.getStuUid() == null ? other.getStuUid() == null : this.getStuUid().equals(other.getStuUid()))
+                && (this.getMobile() == null ? other.getMobile() == null : this.getMobile().equals(other.getMobile()))
+                && (this.getText1() == null ? other.getText1() == null : this.getText1().equals(other.getText1()))
+                && (this.getText2() == null ? other.getText2() == null : this.getText2().equals(other.getText2()))
+                && (this.getText3() == null ? other.getText3() == null : this.getText3().equals(other.getText3()))
+                && (this.getText4() == null ? other.getText4() == null : this.getText4().equals(other.getText4()))
+                && (this.getText5() == null ? other.getText5() == null : this.getText5().equals(other.getText5()))
+                && (this.getText6() == null ? other.getText6() == null : this.getText6().equals(other.getText6()))
+                && (this.getText7() == null ? other.getText7() == null : this.getText7().equals(other.getText7()))
+                && (this.getText8() == null ? other.getText8() == null : this.getText8().equals(other.getText8()))
+                && (this.getText9() == null ? other.getText9() == null : this.getText9().equals(other.getText9()))
+                && (this.getText10() == null ? other.getText10() == null : this.getText10().equals(other.getText10()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+                && (this.getClickTime() == null ? other.getClickTime() == null : this.getClickTime().equals(other.getClickTime()))
+                && (this.getClickNums() == null ? other.getClickNums() == null : this.getClickNums().equals(other.getClickNums()))
+                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+                && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
     }
 
     @Override

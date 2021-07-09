@@ -156,7 +156,7 @@ public class UserFileEnhanceScheduled {
                 cacheMobileArr.add(vo.getMobile());
                 cacheUidMap.put(vo.getMobile(), uid);
                 NmsSmsTmplDBVo dbVo = new NmsSmsTmplDBVo();
-                dbVo.setStu_uid(Long.valueOf(uid));
+                dbVo.setStuUid(Long.valueOf(uid));
 
                 //设置短链
                 vo = setUrl(sysSchool, vo, uid);
@@ -169,7 +169,9 @@ public class UserFileEnhanceScheduled {
         }
 
         //增量数据批量入库
-        batchSave(sysUserFile, updateDBList);
+        if (updateDBList.size() > 0) {
+            batchSave(sysUserFile, updateDBList);
+        }
 
         //缓存增量更新
         stringRedisTemplate.opsForValue().set(cacheMobileKey, JSONObject.toJSONString(cacheMobileArr), uidExpireMinutes, TimeUnit.MINUTES);

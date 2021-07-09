@@ -1,14 +1,14 @@
 package com.admission.security.service.impl;
 
+import com.admission.security.VO.FileRequestVO;
 import com.admission.security.config.service.UserToolService;
 import com.admission.security.dao.SysUserFileMapper;
+import com.admission.security.entity.SysUserFile;
+import com.admission.security.service.SysUserFileService;
 import com.admission.security.utils.DateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.admission.security.VO.FileRequestVO;
-import com.admission.security.entity.SysUserFile;
-import com.admission.security.service.SysUserFileService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +45,9 @@ public class SysUserFileServiceImpl extends ServiceImpl<SysUserFileMapper, SysUs
         }
 
         IPage<SysUserFile> userIPage = baseMapper.selectPage(page, wrapper);
+        if (userIPage.getRecords().size() > 0) {
+
+        }
         return userIPage;
     }
 }
