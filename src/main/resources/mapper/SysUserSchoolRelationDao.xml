@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.spring.security.dao.SysUserSchoolRelationDao">
-    <resultMap id="BaseResultMap" type="com.spring.security.entity.SysUserSchoolRelation">
+<mapper namespace="com.admission.security.dao.SysUserSchoolRelationDao">
+    <resultMap id="BaseResultMap" type="com.admission.security.entity.SysUserSchoolRelation">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="school_id" jdbcType="INTEGER" property="schoolId"/>
@@ -28,13 +28,13 @@
     delete from sys_user_school_relation
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.spring.security.entity.SysUserSchoolRelation"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.admission.security.entity.SysUserSchoolRelation"
             useGeneratedKeys="true">
     insert into sys_user_school_relation (user_id, school_id)
     values (#{userId,jdbcType=INTEGER}, #{schoolId,jdbcType=INTEGER})
   </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
-            parameterType="com.spring.security.entity.SysUserSchoolRelation" useGeneratedKeys="true">
+            parameterType="com.admission.security.entity.SysUserSchoolRelation" useGeneratedKeys="true">
         insert into sys_user_school_relation
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">
@@ -53,7 +53,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.spring.security.entity.SysUserSchoolRelation">
+    <update id="updateByPrimaryKeySelective" parameterType="com.admission.security.entity.SysUserSchoolRelation">
         update sys_user_school_relation
         <set>
             <if test="userId != null">
@@ -65,7 +65,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.spring.security.entity.SysUserSchoolRelation">
+    <update id="updateByPrimaryKey" parameterType="com.admission.security.entity.SysUserSchoolRelation">
     update sys_user_school_relation
     set user_id = #{userId,jdbcType=INTEGER},
       school_id = #{schoolId,jdbcType=INTEGER}

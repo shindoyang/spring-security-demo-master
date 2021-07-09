@@ -2,28 +2,28 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.spring.security.mapper.SysStudentMapper">
+<mapper namespace="com.admission.security.mapper.SysStudentMapper">
 
-    <resultMap id="BaseResultMap" type="com.spring.security.entity.SysStudent">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="account" column="account" jdbcType="VARCHAR"/>
-            <result property="stuUid" column="stu_uid" jdbcType="BIGINT"/>
-            <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
-            <result property="text1" column="text1" jdbcType="VARCHAR"/>
-            <result property="text2" column="text2" jdbcType="VARCHAR"/>
-            <result property="text3" column="text3" jdbcType="VARCHAR"/>
-            <result property="text4" column="text4" jdbcType="VARCHAR"/>
-            <result property="text5" column="text5" jdbcType="VARCHAR"/>
-            <result property="text6" column="text6" jdbcType="VARCHAR"/>
-            <result property="text7" column="text7" jdbcType="VARCHAR"/>
-            <result property="text8" column="text8" jdbcType="VARCHAR"/>
-            <result property="text9" column="text9" jdbcType="VARCHAR"/>
-            <result property="text10" column="text10" jdbcType="VARCHAR"/>
-            <result property="status" column="status" jdbcType="BOOLEAN"/>
-            <result property="clickTime" column="click_time" jdbcType="TIMESTAMP"/>
-            <result property="clickNums" column="click_nums" jdbcType="INTEGER"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    <resultMap id="BaseResultMap" type="com.admission.security.entity.SysStudent">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="account" column="account" jdbcType="VARCHAR"/>
+        <result property="stuUid" column="stu_uid" jdbcType="BIGINT"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="text1" column="text1" jdbcType="VARCHAR"/>
+        <result property="text2" column="text2" jdbcType="VARCHAR"/>
+        <result property="text3" column="text3" jdbcType="VARCHAR"/>
+        <result property="text4" column="text4" jdbcType="VARCHAR"/>
+        <result property="text5" column="text5" jdbcType="VARCHAR"/>
+        <result property="text6" column="text6" jdbcType="VARCHAR"/>
+        <result property="text7" column="text7" jdbcType="VARCHAR"/>
+        <result property="text8" column="text8" jdbcType="VARCHAR"/>
+        <result property="text9" column="text9" jdbcType="VARCHAR"/>
+        <result property="text10" column="text10" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="BOOLEAN"/>
+        <result property="clickTime" column="click_time" jdbcType="TIMESTAMP"/>
+        <result property="clickNums" column="click_nums" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">

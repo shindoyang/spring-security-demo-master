@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.spring.security.dao.SysRequestPathPermissionRelationDao">
+<mapper namespace="com.admission.security.dao.SysRequestPathPermissionRelationDao">
 
-    <resultMap type="com.spring.security.entity.SysRequestPathPermissionRelation" id="SysRequestPathPermissionRelationMap">
+    <resultMap type="com.admission.security.entity.SysRequestPathPermissionRelation" id="SysRequestPathPermissionRelationMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="urlId" column="url_id" jdbcType="INTEGER"/>
         <result property="permissionId" column="permission_id" jdbcType="INTEGER"/>
