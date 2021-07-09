@@ -89,6 +89,8 @@ spring:
       shutdown-timeout: 100ms
 server:
   port: 8666
+  servlet:
+    context-path: /school
 
 # token配置
 token:

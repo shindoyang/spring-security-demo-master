@@ -71,7 +71,7 @@ public class UserFileEnhanceScheduled {
                 try {
                     //获取关联的学校信息
                     QueryWrapper<SysSchool> schoolWrapper = new QueryWrapper<>();
-                    schoolWrapper.eq("account", 0);
+                    schoolWrapper.eq("account", sysUserFile.getAccount());
                     SysSchool sysSchool = sysSchoolService.getOne(schoolWrapper);
                     if (null == sysSchool) {
                         throw new Exception(sysUserFile.getAccount() + "未设置关联的学校信息！");
