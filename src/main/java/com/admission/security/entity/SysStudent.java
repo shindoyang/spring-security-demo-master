@@ -29,7 +29,7 @@ public class SysStudent implements Serializable {
     /**
      *
      */
-    private Long stuUid;
+    private String stuUid;
 
     /**
      * 手机号
@@ -148,17 +148,11 @@ public class SysStudent implements Serializable {
         this.account = account;
     }
 
-    /**
-     *
-     */
-    public Long getStuUid() {
+    public String getStuUid() {
         return stuUid;
     }
 
-    /**
-     *
-     */
-    public void setStuUid(Long stuUid) {
+    public void setStuUid(String stuUid) {
         this.stuUid = stuUid;
     }
 

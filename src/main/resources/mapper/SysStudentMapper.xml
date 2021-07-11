@@ -7,7 +7,7 @@
     <resultMap id="BaseResultMap" type="com.admission.security.entity.SysStudent">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="account" column="account" jdbcType="VARCHAR"/>
-        <result property="stuUid" column="stu_uid" jdbcType="BIGINT"/>
+        <result property="stuUid" column="stu_uid" jdbcType="VARCHAR"/>
         <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
         <result property="text1" column="text1" jdbcType="VARCHAR"/>
         <result property="text2" column="text2" jdbcType="VARCHAR"/>

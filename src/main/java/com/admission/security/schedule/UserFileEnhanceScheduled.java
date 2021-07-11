@@ -158,7 +158,7 @@ public class UserFileEnhanceScheduled {
                 cacheMobileArr.add(vo.getMobile());
                 cacheUidMap.put(vo.getMobile(), uid);
                 NmsSmsTmplDBVo dbVo = new NmsSmsTmplDBVo();
-                dbVo.setStuUid(Long.valueOf(uid));
+                dbVo.setStuUid(uid);
 
                 //设置短链
                 vo = setUrl(sysSchool, vo, uid);

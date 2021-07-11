@@ -27,7 +27,7 @@ public class NmsSmsTmplDBVo {
 
     private String text10;
 
-    private long stuUid;
+    private String stuUid;
 
 
 }
