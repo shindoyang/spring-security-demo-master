@@ -1,5 +1,7 @@
 package com.admission.security;
 
+import com.admission.security.constant.RedisConstant;
+import com.admission.security.utils.IdUtils;
 import com.admission.security.utils.ShortUrlGenerate;
 import org.springframework.util.StopWatch;
 
@@ -8,7 +10,7 @@ import java.util.UUID;
 public class ShortUrlTest {
 
     public static void test() {
-        
+
         int size = 1000000;
         String[] urls = new String[size];
 
@@ -29,6 +31,13 @@ public class ShortUrlTest {
     }
 
     public static void main(String[] args) {
-        test();
+//        test();
+        String str = "中山大学:" + "user2:" + "13417778470";
+        System.out.println(ShortUrlGenerate.generate(str));
+
+        String temp = String.format(RedisConstant.USER_SHORT_URL, "http://view.dev.5gimos.com/colleges-universities/hg", IdUtils.randomUUID(), "13417778470");
+        System.out.println(temp);
+        String shortUrl = ShortUrlGenerate.generate(temp);
+        System.out.println(shortUrl);
     }
 }

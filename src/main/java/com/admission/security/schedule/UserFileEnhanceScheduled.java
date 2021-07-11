@@ -7,7 +7,9 @@ import com.admission.security.entity.*;
 import com.admission.security.service.SysSchoolService;
 import com.admission.security.service.SysStudentService;
 import com.admission.security.service.SysUserFileService;
+import com.admission.security.utils.IdUtils;
 import com.admission.security.utils.IdWorker;
+import com.admission.security.utils.ShortUrlGenerate;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -127,7 +129,7 @@ public class UserFileEnhanceScheduled {
         //获取缓存的已经生成的手机号-uid对应关系
         String cacheUids = stringRedisTemplate.opsForValue().get(cacheUidKey);
         JSONArray cacheMobileArr = new JSONArray();
-        Map cacheUidMap = new HashMap();
+        Map<String, String> cacheUidMap = new HashMap();
         if (Strings.isNotEmpty(cacheMobiles)) {
             cacheMobileArr = JSONObject.parseArray(cacheMobiles);
         }
@@ -146,12 +148,12 @@ public class UserFileEnhanceScheduled {
             //缓存和数据库只处理增量的,excel文件要全量处理。保证同一个手机号每次生成的链接都是一样的
             if (null != cacheMobileArr && cacheMobileArr.contains(vo.getMobile())) {
                 if (null != cacheUidMap) {
-                    uid = String.valueOf(cacheUidMap.get(vo.getMobile()));
+                    uid = cacheUidMap.get(vo.getMobile());
                     //设置短链
                     vo = setUrl(sysSchool, vo, uid);
                 }
             } else {
-                uid = String.valueOf(worker.nextId());
+                uid = ShortUrlGenerate.generate(String.format(RedisConstant.USER_SHORT_URL, sysSchool.getHost(), IdUtils.randomUUID(), vo.getMobile()));
                 //本次增量内容
                 cacheMobileArr.add(vo.getMobile());
                 cacheUidMap.put(vo.getMobile(), uid);
