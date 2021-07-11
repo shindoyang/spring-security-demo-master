@@ -34,6 +34,7 @@ public enum ResultCode {
     USER_ACCOUNT_ALREADY_EXIST(2008, "账号已存在"),
     USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),
     USER_TOKEN_ERROR(2010, "token解析异常"),
+    USER_TOKEN_EXPIRE_ERROR(2011, "token已过期，请重新登录"),
 
     /* 业务错误 */
     NO_PERMISSION(3001, "没有权限"),
