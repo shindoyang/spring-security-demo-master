@@ -42,11 +42,6 @@
             <artifactId>spring-security-config</artifactId>
             <version>${spring.security.version}</version>
         </dependency>-->
-        <!-- Hikari连接池-->
-        <!--<dependency>
-                    <groupId>com.zaxxer</groupId>
-                    <artifactId>HikariCP</artifactId>
-                </dependency>-->
         <!-- 阿里数据库连接池 -->
         <dependency>
             <groupId>com.alibaba</groupId>

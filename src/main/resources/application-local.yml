@@ -12,21 +12,6 @@ schedule:
 spring:
   application:
     name: admission
-  #  datasource:
-  #    type: com.zaxxer.hikari.HikariDataSource
-  #    driver-class-name: com.mysql.cj.jdbc.Driver
-  #    url: jdbc:mysql://123.57.131.180:13306/spring_security?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=CTT
-  #    username: root
-  #    password: 123456
-  #    hikari:
-  #      minimum-idle: 5
-  #      idle-timeout: 600000
-  #      maximum-pool-size: 10
-  #      auto-commit: true
-  #      pool-name: MyHikariCP
-  #      max-lifetime: 1800000
-  #      connection-timeout: 30000
-  #      connection-test-query: SELECT 1
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
