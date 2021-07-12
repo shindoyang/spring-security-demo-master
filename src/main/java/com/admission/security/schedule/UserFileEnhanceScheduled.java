@@ -7,10 +7,9 @@ import com.admission.security.entity.*;
 import com.admission.security.service.SysSchoolService;
 import com.admission.security.service.SysStudentService;
 import com.admission.security.service.SysUserFileService;
-import com.admission.security.utils.IdUtils;
 import com.admission.security.utils.IdWorker;
 import com.admission.security.utils.IpUtils;
-import com.admission.security.utils.ShortUrlGenerate;
+import com.admission.security.utils.UidUtils;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -69,7 +68,7 @@ public class UserFileEnhanceScheduled {
             // 获取redis锁
             if (stringRedisTemplate.opsForValue().setIfAbsent(concurrentKey, IpUtils.getHostIp(), processingExpireMilliSeconds, TimeUnit.MILLISECONDS)) {
                 isJobRunning = true;
-                log.info("成功获取文件增强并发锁！");
+                log.info("成功获取文件增强定时器并发锁！");
                 QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
                 wrapper.eq("status", 0);
                 List<SysUserFile> list = sysUserFileService.list(wrapper);
@@ -146,17 +145,24 @@ public class UserFileEnhanceScheduled {
         //获取缓存的已经处理过的手机号
         String cacheMobileKey = String.format(RedisConstant.USER_CACHE_MOBILES, sysUserFile.getAccount());
         String cacheUidKey = String.format(RedisConstant.USER_CACHE_UIDS, sysUserFile.getAccount());
+        String cacheWholeUidKey = RedisConstant.WHOLE_CACHE_UIDS;
 
         String cacheMobiles = stringRedisTemplate.opsForValue().get(cacheMobileKey);
         //获取缓存的已经生成的手机号-uid对应关系
         String cacheUids = stringRedisTemplate.opsForValue().get(cacheUidKey);
+        //获取系统生成过的所有uid
+        String wholeUids = stringRedisTemplate.opsForValue().get(cacheWholeUidKey);
         JSONArray cacheMobileArr = new JSONArray();
-        Map<String, String> cacheUidMap = new HashMap();
         if (Strings.isNotEmpty(cacheMobiles)) {
             cacheMobileArr = JSONObject.parseArray(cacheMobiles);
         }
+        Map<String, String> cacheUidMap = new HashMap();
         if (Strings.isNotEmpty(cacheUids)) {
             cacheUidMap = (Map) JSON.parse(cacheUids);
+        }
+        JSONArray cacheWholeUidArr = new JSONArray();
+        if (Strings.isNotEmpty(wholeUids)) {
+            cacheWholeUidArr = JSONObject.parseArray(wholeUids);
         }
         log.info("已处理过的手机号个数：{}", null != cacheMobileArr ? cacheMobileArr.size() : 0);
         log.info("已缓存过的uid个数：{}", null != cacheUidMap ? cacheUidMap.size() : 0);
@@ -175,10 +181,12 @@ public class UserFileEnhanceScheduled {
                     vo = setUrl(sysSchool, vo, uid);
                 }
             } else {
-                uid = ShortUrlGenerate.generate(String.format(RedisConstant.USER_SHORT_URL, sysSchool.getHost(), IdUtils.randomUUID(), vo.getMobile()));
+//                uid = ShortUrlGenerate.generate(String.format(RedisConstant.USER_SHORT_URL, sysSchool.getHost(), IdUtils.randomUUID(), vo.getMobile()));
+                uid = UidUtils.getUid(cacheWholeUidArr, sysSchool.getHost(), vo.getMobile());
                 //本次增量内容
                 cacheMobileArr.add(vo.getMobile());
                 cacheUidMap.put(vo.getMobile(), uid);
+                cacheWholeUidArr.add(uid);
                 NmsSmsTmplDBVo dbVo = new NmsSmsTmplDBVo();
                 dbVo.setStuUid(uid);
 
@@ -198,8 +206,12 @@ public class UserFileEnhanceScheduled {
         }
 
         //缓存增量更新
-        stringRedisTemplate.opsForValue().set(cacheMobileKey, JSONObject.toJSONString(cacheMobileArr), uidExpireMinutes, TimeUnit.MINUTES);
-        stringRedisTemplate.opsForValue().set(cacheUidKey, JSONObject.toJSONString(cacheUidMap), uidExpireMinutes, TimeUnit.MINUTES);
+//        stringRedisTemplate.opsForValue().set(cacheMobileKey, JSONObject.toJSONString(cacheMobileArr), uidExpireMinutes, TimeUnit.MINUTES);
+//        stringRedisTemplate.opsForValue().set(cacheUidKey, JSONObject.toJSONString(cacheUidMap), uidExpireMinutes, TimeUnit.MINUTES);
+//        stringRedisTemplate.opsForValue().set(cacheWholeUidKey, JSONObject.toJSONString(cacheWholeUidArr), uidExpireMinutes, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(cacheMobileKey, JSONObject.toJSONString(cacheMobileArr));
+        stringRedisTemplate.opsForValue().set(cacheUidKey, JSONObject.toJSONString(cacheUidMap));
+        stringRedisTemplate.opsForValue().set(cacheWholeUidKey, JSONObject.toJSONString(cacheWholeUidArr));
         return wholeExecelDataList;
     }
 
