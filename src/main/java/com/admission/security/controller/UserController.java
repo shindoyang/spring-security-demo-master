@@ -11,22 +11,31 @@ import com.admission.security.config.service.UserToolService;
 import com.admission.security.entity.SysSchool;
 import com.admission.security.entity.SysStudent;
 import com.admission.security.entity.SysUser;
+import com.admission.security.entity.model.LoginUser;
+import com.admission.security.exception.CustomException;
+import com.admission.security.exception.user.UserPasswordNotMatchException;
 import com.admission.security.service.SysSchoolService;
 import com.admission.security.service.SysStudentService;
 import com.admission.security.service.SysUserService;
-import com.admission.security.utils.JWTUtils;
 import com.admission.security.utils.MD5Util;
+import com.admission.security.web.service.TokenService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -50,11 +59,39 @@ public class UserController {
     SysSchoolService sysSchoolService;
     @Autowired
     UserToolService userToolService;
+    @Resource
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/login")
     public JsonResult login(HttpServletResponse response, String username, String password) {
+// 用户验证
+        Authentication authentication = null;
+        try {
+            // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            if (e instanceof BadCredentialsException) {
+                throw new UserPasswordNotMatchException();
+            } else if (e instanceof UsernameNotFoundException) {
+                throw new UsernameNotFoundException("登录用户不存在");
+            } else {
+                throw new CustomException(e.getMessage());
+            }
+        }
+
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        /*if ("客户".equals(loginUser.getUser().getCspUserType())) {
+            AsyncManager.me().execute(AsyncFactory.recordOper(loginUser.getUser().getUserName(), loginUser.getUser().getEtprInfoId(), 0, "登录用户：{" + loginUser.getUser().getUserName() + "} 登录成功."));
+        }*/
+        // 生成token
+        String token = tokenService.createToken(loginUser);
+
         //根据用户名查询用户
-        SysUser sysUser = sysUserService.selectByName(username);
+        /*SysUser sysUser = sysUserService.selectByName(username);
         if (sysUser == null) {
             return ResultTool.fail(ResultCode.USER_ACCOUNT_NOT_EXIST);
         }
@@ -68,9 +105,9 @@ public class UserController {
         Map<String, String> map = new HashMap<>();
         map.put("username", sysUser.getAccount());
         String token = JWTUtils.generateTokenExpireInMinutes(map, 24 * 60);
-
+*/
         Map result = new HashMap<>();
-        result.put("username", sysUser.getUserName());
+        result.put("username", loginUser.getUsername());
         result.put("token", token);
         return ResultTool.success(result);
     }

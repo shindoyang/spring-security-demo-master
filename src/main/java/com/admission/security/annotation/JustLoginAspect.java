@@ -3,7 +3,6 @@ package com.admission.security.annotation;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
 import com.alibaba.fastjson.JSONObject;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -17,8 +16,6 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.Optional;
-
-import static com.admission.security.utils.JWTUtils.verify;
 
 @Slf4j
 @Aspect
@@ -57,9 +54,9 @@ public class JustLoginAspect {
             writer.write(JSONObject.toJSONString(ResultTool.fail(ResultCode.USER_NOT_LOGIN)));
         }
 
-        token = requestToken.substring(SUBSTRING_START_INDEX, requestToken.length());
+        /*token = requestToken.substring(SUBSTRING_START_INDEX, requestToken.length());
         DecodedJWT tokenInfo = verify(token);
-        String account = tokenInfo.getClaim("username").asString();
+        String account = tokenInfo.getClaim("username").asString();*/
         //将RequestAttributes对象设置为子线程共享
             /*ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             sra.setAttribute("curUser", account);

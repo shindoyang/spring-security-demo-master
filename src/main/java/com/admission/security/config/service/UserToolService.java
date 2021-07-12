@@ -1,13 +1,10 @@
 package com.admission.security.config.service;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.admission.security.utils.JWTUtils.verify;
 
 @Slf4j
 @Service
@@ -34,8 +31,8 @@ public class UserToolService {
 
         String token = authorization.substring(SUBSTRING_START_INDEX, authorization.length());
         try {
-            DecodedJWT tokenInfo = verify(token);
-            String account = tokenInfo.getClaim("username").asString();
+            /*DecodedJWT tokenInfo = verify(token);
+            String account = tokenInfo.getClaim("username").asString();*/
         } catch (Exception e) {
             log.info("请求tokeng格式转换异常：{}", authorization);
             e.printStackTrace();
@@ -61,8 +58,8 @@ public class UserToolService {
 
         String authorization = request.getHeader("Authorization");
         String token = authorization.substring(SUBSTRING_START_INDEX, authorization.length());
-        DecodedJWT tokenInfo = verify(token);
-        String account = tokenInfo.getClaim("username").asString();
-        return account;
+        /*DecodedJWT tokenInfo = verify(token);
+        String account = tokenInfo.getClaim("username").asString();*/
+        return "account";
     }
 }

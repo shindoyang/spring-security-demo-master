@@ -29,4 +29,8 @@ public class ResultTool {
     public static JsonResult failByMsg(String msg) {
         return new JsonResult(false, msg);
     }
+
+    public static JsonResult fail(Integer code, String msg) {
+        return new JsonResult(false, code, msg, "");
+    }
 }

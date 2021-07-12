@@ -1,14 +1,5 @@
 package com.admission.security.utils;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
 public class JWTUtils {
 
     //秘钥 盐
@@ -21,7 +12,7 @@ public class JWTUtils {
      * @param expired
      * @return
      */
-    public static String generateTokenExpireInMinutes(Map<String, String> map, Integer expired) {
+    /*public static String generateTokenExpireInMinutes(Map<String, String> map, Integer expired) {
         Calendar instance = Calendar.getInstance();
         //设置过期时间单位:秒
         instance.add(Calendar.SECOND, expired);
@@ -38,11 +29,11 @@ public class JWTUtils {
         return token;
     }
 
-    /**
+    *//**
      * 验证token 合法性 || 获取token信息方法
      *
      * @param token
-     */
+     *//*
     public static DecodedJWT verify(String token) {
         return JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
     }
@@ -60,5 +51,5 @@ public class JWTUtils {
 
         System.out.println(userId);
         System.out.println(loginName);
-    }
+    }*/
 }
