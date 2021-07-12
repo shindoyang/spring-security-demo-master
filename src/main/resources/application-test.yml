@@ -152,3 +152,6 @@ logging:
   level:
     #root: warn
     com.admission.security.dao: debug
+redis:
+  concurrent:
+    processingExpireMilliSeconds: 600000  # 毫秒:60 * 1000 * 10 = 600000， 10分钟

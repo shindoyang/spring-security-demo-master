@@ -9,6 +9,7 @@ import com.admission.security.service.SysStudentService;
 import com.admission.security.service.SysUserFileService;
 import com.admission.security.utils.IdUtils;
 import com.admission.security.utils.IdWorker;
+import com.admission.security.utils.IpUtils;
 import com.admission.security.utils.ShortUrlGenerate;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
@@ -52,72 +53,93 @@ public class UserFileEnhanceScheduled {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    private final static String concurrentKey = "schedule.userfile.cron";
+
+    @Value("${redis.concurrent.processingExpireMilliSeconds}")
+    private long processingExpireMilliSeconds; //毫秒
+
     /**
      * 文件增强处理器
      */
     @Scheduled(cron = "${schedule.userfile.cron}")
     private void sendMessageScheduled() {
-        //todo 加并发锁
-
+        boolean isJobRunning = false;
         log.info("开始查找待增强的文件");
-        QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 0);
-        List<SysUserFile> list = sysUserFileService.list(wrapper);
-        log.info("待处理文件数：{}", list.size());
+        try {
+            // 获取redis锁
+            if (stringRedisTemplate.opsForValue().setIfAbsent(concurrentKey, IpUtils.getHostIp(), processingExpireMilliSeconds, TimeUnit.MILLISECONDS)) {
+                isJobRunning = true;
+                log.info("成功获取文件增强并发锁！");
+                QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
+                wrapper.eq("status", 0);
+                List<SysUserFile> list = sysUserFileService.list(wrapper);
+                log.info("待处理文件数：{}", list.size());
 
-        if (null != list && list.size() > 0) {
-            for (int i = 0; i < list.size(); i++) {
-                int index = i + 1;
-                log.info("开始处理第 {} 条文件，内容：{}", index, JSON.toJSON(list));
-                SysUserFile sysUserFile = list.get(0);
-                try {
-                    //获取关联的学校信息
-                    QueryWrapper<SysSchool> schoolWrapper = new QueryWrapper<>();
-                    schoolWrapper.eq("account", sysUserFile.getAccount());
-                    SysSchool sysSchool = sysSchoolService.getOne(schoolWrapper);
-                    if (null == sysSchool) {
-                        throw new Exception(sysUserFile.getAccount() + "未设置关联的学校信息！");
+                if (null != list && list.size() > 0) {
+                    for (int i = 0; i < list.size(); i++) {
+                        int index = i + 1;
+                        log.info("开始处理第 {} 条文件，内容：{}", index, JSON.toJSON(list));
+                        SysUserFile sysUserFile = list.get(0);
+                        try {
+                            //获取关联的学校信息
+                            QueryWrapper<SysSchool> schoolWrapper = new QueryWrapper<>();
+                            schoolWrapper.eq("account", sysUserFile.getAccount());
+                            SysSchool sysSchool = sysSchoolService.getOne(schoolWrapper);
+                            if (null == sysSchool) {
+                                throw new Exception(sysUserFile.getAccount() + "未设置关联的学校信息！");
+                            }
+
+                            String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
+                            String tempFilePath = filePath + "_temp.xlsx";
+                            String finishFilePath = filePath + ".xlsx";
+
+
+                            File file = new File(tempFilePath);
+                            if (file != null) {
+                                // 读取文件
+                                StopWatch stopWatch = new StopWatch();
+                                stopWatch.start();
+                                List<NmsSmsTmplExcelVo> nmsFileList = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
+                                stopWatch.stop();
+                                log.info("读取文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                                log.info("当前文件总行数：{}", null != nmsFileList ? nmsFileList.size() : 0);
+
+                                //添加短链
+                                stopWatch.start();
+                                List<NmsSmsTmplExcelVo> newList = setUrl(sysSchool, sysUserFile, nmsFileList);
+                                stopWatch.stop();
+                                log.info("添加短链耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+
+                                stopWatch.start();
+                                EasyExcel.write(finishFilePath, NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(newList);
+                                stopWatch.stop();
+                                log.info("写文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
+                            }
+                            sysUserFile.setStatus(1);
+                            sysUserFile.setUpdateTime(new Date());
+                            sysUserFileService.updateById(sysUserFile);
+                            log.info("文件：{}，处理完成！", sysUserFile.getFileName());
+
+                        } catch (Exception e) {
+                            log.error("文件：{}，处理失败：{}", sysUserFile.getFileName(), e.getMessage());
+                            e.printStackTrace();
+                        }
+
+                        log.info("第 {} 条文件处理完成！", index);
                     }
-
-                    String filePath = AdmissionConfig.getUploadPath() + "/" + sysUserFile.getFileUrl();
-                    String tempFilePath = filePath + "_temp.xlsx";
-                    String finishFilePath = filePath + ".xlsx";
-
-
-                    File file = new File(tempFilePath);
-                    if (file != null) {
-                        // 读取文件
-                        StopWatch stopWatch = new StopWatch();
-                        stopWatch.start();
-                        List<NmsSmsTmplExcelVo> nmsFileList = EasyExcel.read(file).head(NmsSmsTmplExcelVo.class).sheet(0).headRowNumber(2).doReadSync();
-                        stopWatch.stop();
-                        log.info("读取文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
-                        log.info("当前文件总行数：{}", null != nmsFileList ? nmsFileList.size() : 0);
-
-                        //添加短链
-                        stopWatch.start();
-                        List<NmsSmsTmplExcelVo> newList = setUrl(sysSchool, sysUserFile, nmsFileList);
-                        stopWatch.stop();
-                        log.info("添加短链耗时：{} 秒", stopWatch.getTotalTimeSeconds());
-
-                        stopWatch.start();
-                        EasyExcel.write(finishFilePath, NmsSmsTmplExcelVo.class).sheet("Sheet1").doWrite(newList);
-                        stopWatch.stop();
-                        log.info("写文件耗时：{} 秒", stopWatch.getTotalTimeSeconds());
-                    }
-                    sysUserFile.setStatus(1);
-                    sysUserFile.setUpdateTime(new Date());
-                    sysUserFileService.updateById(sysUserFile);
-                    log.info("文件：{}，处理完成！", sysUserFile.getFileName());
-
-                } catch (Exception e) {
-                    log.error("文件：{}，处理失败：{}", sysUserFile.getFileName(), e.getMessage());
-                    e.printStackTrace();
                 }
-
-                log.info("第 {} 条文件处理完成！", index);
+            } else {
+                log.info("文件增强定时器正在处理当中");
+            }
+        } catch (Exception e) {
+            log.error("文件增强定时器任务异常" + e.getMessage());
+        } finally {
+            if (isJobRunning) {
+                log.info("释放文件增强定时器并发锁！");
+                stringRedisTemplate.delete(concurrentKey);
             }
         }
+
     }
 
     private List<NmsSmsTmplExcelVo> setUrl(SysSchool sysSchool, SysUserFile sysUserFile, List<NmsSmsTmplExcelVo> nmsFileList) throws Exception {
