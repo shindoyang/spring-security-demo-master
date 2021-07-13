@@ -43,6 +43,7 @@ public class SysUserFileServiceImpl extends ServiceImpl<SysUserFileMapper, SysUs
                 && Strings.isNotEmpty(param.getEndTime()) && Strings.isNotBlank(param.getEndTime())) {
             wrapper.between("create_time", DateUtils.getTimestamp(param.getStartTime()), DateUtils.getTimestamp(param.getEndTime()));
         }
+        wrapper.orderByDesc("create_time");
 
         IPage<SysUserFile> userIPage = baseMapper.selectPage(page, wrapper);
         if (userIPage.getRecords().size() > 0) {

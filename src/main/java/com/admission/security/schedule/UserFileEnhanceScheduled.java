@@ -243,7 +243,7 @@ public class UserFileEnhanceScheduled {
      */
     private NmsSmsTmplExcelVo setUrl(SysSchool sysSchool, NmsSmsTmplExcelVo vo, String uid) {
         if (sysSchool != null) {
-            uid = sysSchool.getHost() + "/" + uid;
+            uid = sysSchool.getHost() + uid;
         }
 
         if (null == vo.getText1()) {
