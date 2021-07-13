@@ -139,6 +139,10 @@ public class FileUploadServiceImpl implements FileUploadService {
                 throw new Exception(ResultCode.FAIL_NOT_EXIST.getMessage());
             }
 
+            if (0 == sysUserFile.getStatus()) {
+                throw new Exception(ResultCode.FAIL_FILE_NOT_ENHANCE_ERROR.getMessage());
+            }
+
             //校验当前用户是否有该文件的操作权限
             String loginUser = userToolService.getLoginUser(request);
             if (null != sysUserFile && loginUser != null && !loginUser.equals(sysUserFile.getAccount())) {
