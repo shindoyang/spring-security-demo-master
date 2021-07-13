@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mfexcel.sensitive.engine.SensitiveEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,11 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
 
             String originalFilename = file.getOriginalFilename();
+            String justFileName = originalFilename.substring(0, originalFilename.lastIndexOf(".xlsx"));
+            if (Strings.isBlank(justFileName) || Strings.isEmpty(justFileName)) {
+                return ResultTool.fail(ResultCode.FAIL_FILE_NAME_EMPTY_ERROR);
+            }
+
             log.info("originalFilename = " + originalFilename);
             if (originalFilename.length() > 150) {
                 return ResultTool.fail(ResultCode.FAIL_LENGTH_OVER_ERROR);
