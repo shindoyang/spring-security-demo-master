@@ -2,10 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.admission.security.dao.SysSchoolMapper">
+<mapper namespace="com.admission.security.mapper.SysSchoolMapper">
 
     <resultMap id="BaseResultMap" type="com.admission.security.entity.SysSchool">
             <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="schoolCode" column="school_code" jdbcType="VARCHAR"/>
             <result property="schoolName" column="school_name" jdbcType="VARCHAR"/>
             <result property="account" column="account" jdbcType="VARCHAR"/>
             <result property="host" column="host" jdbcType="VARCHAR"/>
@@ -14,7 +15,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,school_name,account,
-        host,create_time,update_time
+        id,school_code,school_name,
+        account,host,create_time,
+        update_time
     </sql>
 </mapper>

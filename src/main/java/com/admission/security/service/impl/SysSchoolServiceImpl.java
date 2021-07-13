@@ -1,12 +1,15 @@
 package com.admission.security.service.impl;
 
 import com.admission.security.VO.SchoolRequestVO;
+import com.admission.security.VO.SchoolUpdateRequestVO;
 import com.admission.security.VO.UserRequestVO;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
 import com.admission.security.config.service.UserToolService;
+import com.admission.security.dao.SysSchoolMapper;
 import com.admission.security.entity.SysSchool;
+import com.admission.security.entity.SysUser;
 import com.admission.security.service.SysSchoolService;
 import com.admission.security.service.SysUserService;
 import com.admission.security.utils.DateUtils;
@@ -14,9 +17,6 @@ import com.admission.security.utils.MD5Util;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.admission.security.VO.SchoolUpdateRequestVO;
-import com.admission.security.dao.SysSchoolMapper;
-import com.admission.security.entity.SysUser;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,6 +85,7 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         }
         //判断学校是否重复注册
         QueryWrapper<SysSchool> wrapper = new QueryWrapper<>();
+        wrapper.eq("school_code", param.getSchoolCode());
         wrapper.eq("school_name", param.getSchoolName());
         SysSchool dbSysSchool = sysSchoolService.getOne(wrapper);
         if (null != dbSysSchool) {
@@ -109,6 +110,7 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         //新增学校
         SysSchool sysSchool = new SysSchool();
         sysSchool.setAccount(param.getAccount());
+        sysSchool.setSchoolCode(param.getSchoolCode());
         sysSchool.setSchoolName(param.getSchoolName());
         sysSchool.setHost(param.getHost());
         sysSchool.setCreateTime(new Date());
@@ -140,6 +142,9 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         }
         if (null != param.getSchoolName() && Strings.isNotEmpty(param.getSchoolName()) && Strings.isNotBlank(param.getSchoolName())) {
             dbSysSchool.setSchoolName(param.getSchoolName());
+        }
+        if (null != param.getSchoolCode() && Strings.isNotEmpty(param.getSchoolCode()) && Strings.isNotBlank(param.getSchoolCode())) {
+            dbSysSchool.setSchoolCode(param.getSchoolCode());
         }
         if (null != param.getHost() && Strings.isNotEmpty(param.getHost()) && Strings.isNotBlank(param.getHost())) {
             dbSysSchool.setHost(param.getHost());

@@ -11,6 +11,7 @@ public class UserRequestVO {
     private String password;
 
     //学校信息
+    private String schoolCode;
     private String schoolName;
     private String host;
 

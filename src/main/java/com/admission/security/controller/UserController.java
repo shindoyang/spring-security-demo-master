@@ -1,9 +1,6 @@
 package com.admission.security.controller;
 
-import com.admission.security.VO.SchoolRequestVO;
-import com.admission.security.VO.SchoolUpdateRequestVO;
-import com.admission.security.VO.UserRequestVO;
-import com.admission.security.VO.UserUpdateRequestVO;
+import com.admission.security.VO.*;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
@@ -21,6 +18,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,7 +57,7 @@ public class UserController {
             return ResultTool.fail(ResultCode.USER_ACCOUNT_NOT_EXIST);
         }
 
-        String reqPassword = MD5Util.getStringMD5("admission:" + password);
+        String reqPassword = MD5Util.getStringMD5("admission:" + password.trim());
         if (!sysUser.getPassword().equals(reqPassword)) {
             return ResultTool.fail(ResultCode.USER_CREDENTIALS_ERROR);
         }
@@ -86,6 +84,14 @@ public class UserController {
         stuWrapper.eq("stu_uid", userCode);
         stuWrapper.last("LIMIT 1");
         SysStudent one = sysStudentService.getOne(stuWrapper);
+        SysStudentVO result = new SysStudentVO();
+        BeanUtils.copyProperties(one, result);
+
+        QueryWrapper<SysSchool> schWrapper = new QueryWrapper<>();
+        schWrapper.eq("account", one.getAccount());
+        schWrapper.last("LIMIT 1");
+        SysSchool sch = sysSchoolService.getOne(schWrapper);
+        result.setSchoolCode(sch.getSchoolCode());
 
         //第一次获取要更新状态，否则只更新次数
         if (null == one.getStatus() || !one.getStatus()) {
@@ -98,7 +104,7 @@ public class UserController {
             one.setUpdateTime(new Date());
         }
         sysStudentService.updateById(one);
-        return ResultTool.success(one);
+        return ResultTool.success(result);
     }
 
     //============================ 管理员接口 =============================

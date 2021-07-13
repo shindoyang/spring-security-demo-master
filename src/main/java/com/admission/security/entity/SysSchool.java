@@ -22,6 +22,11 @@ public class SysSchool implements Serializable {
     private Long id;
 
     /**
+     * 学校代号
+     */
+    private String schoolCode;
+
+    /**
      * 学校名
      */
     private String schoolName;
@@ -59,6 +64,20 @@ public class SysSchool implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * 学校代号
+     */
+    public String getSchoolCode() {
+        return schoolCode;
+    }
+
+    /**
+     * 学校代号
+     */
+    public void setSchoolCode(String schoolCode) {
+        this.schoolCode = schoolCode;
     }
 
     /**
@@ -144,6 +163,7 @@ public class SysSchool implements Serializable {
         }
         SysSchool other = (SysSchool) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+                && (this.getSchoolCode() == null ? other.getSchoolCode() == null : this.getSchoolCode().equals(other.getSchoolCode()))
                 && (this.getSchoolName() == null ? other.getSchoolName() == null : this.getSchoolName().equals(other.getSchoolName()))
                 && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
                 && (this.getHost() == null ? other.getHost() == null : this.getHost().equals(other.getHost()))
@@ -156,6 +176,7 @@ public class SysSchool implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getSchoolCode() == null) ? 0 : getSchoolCode().hashCode());
         result = prime * result + ((getSchoolName() == null) ? 0 : getSchoolName().hashCode());
         result = prime * result + ((getAccount() == null) ? 0 : getAccount().hashCode());
         result = prime * result + ((getHost() == null) ? 0 : getHost().hashCode());
@@ -171,6 +192,7 @@ public class SysSchool implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", schoolCode=").append(schoolCode);
         sb.append(", schoolName=").append(schoolName);
         sb.append(", account=").append(account);
         sb.append(", host=").append(host);
