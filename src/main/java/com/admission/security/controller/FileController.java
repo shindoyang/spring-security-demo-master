@@ -12,10 +12,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +46,7 @@ public class FileController {
 
 
     @GetMapping("/page")
-    public JsonResult findAll(HttpServletRequest request, FileRequestVO param) {
+    public JsonResult findAll(HttpServletRequest request, @RequestBody FileRequestVO param) {
         //1、检查是否已登录
         if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
