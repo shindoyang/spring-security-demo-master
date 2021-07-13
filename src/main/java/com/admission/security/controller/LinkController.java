@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +29,7 @@ public class LinkController {
     @Autowired
     SysStudentService sysStudentService;
 
-    @GetMapping("/page")
+    @PostMapping("/page")
     public JsonResult findAll(HttpServletRequest request, @RequestBody LinkRequestVO param) {
         //1、检查是否已登录
         if (!userToolService.checkUserlogin(request)) {

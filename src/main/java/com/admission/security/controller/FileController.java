@@ -45,7 +45,7 @@ public class FileController {
     }
 
 
-    @GetMapping("/page")
+    @PostMapping("/page")
     public JsonResult findAll(HttpServletRequest request, @RequestBody FileRequestVO param) {
         //1、检查是否已登录
         if (!userToolService.checkUserlogin(request)) {
