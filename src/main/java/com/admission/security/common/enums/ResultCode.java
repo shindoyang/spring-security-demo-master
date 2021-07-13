@@ -53,7 +53,9 @@ public enum ResultCode {
     FAIL_SCHOOL_REPEAT_ERROR(4012, "已存在同名学校！"),
     FAIL_NO_USER_ERROR(4013, "未找到对应账号！"),
     FAIL_NO_SCHOOL_ERROR(4014, "未找到对应学校！"),
-    FAIL_LENGTH_OVER_ERROR(4015, "文件名长度不能超过50个字符！");
+    FAIL_LENGTH_OVER_ERROR(4015, "文件名长度不能超过150个字符！"),
+    FAIL_FILE_NAME_EMPTY_ERROR(4016, "文件名不能为空！"),
+    FAIL_FILE_NOT_ENHANCE_ERROR(4017, "文件尚未处理完成，请稍后再试！");
 
     private Integer code;
     private String message;
