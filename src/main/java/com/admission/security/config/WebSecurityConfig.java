@@ -1,111 +1,70 @@
 package com.admission.security.config;
-/*
-import com.spring.security.config.handler.*;
-import com.spring.security.config.service.UserDetailsServiceImpl;
+
+import com.admission.security.security.JwtAuthenticationFilter;
+import com.admission.security.security.JwtAuthenticationProvider;
+import com.admission.security.security.JwtLoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
-*//**
- * @Author: Hutengfei
- * @Description:
- * @Date Create in 2019/8/28 20:15
- *//*
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    //登录成功处理逻辑
-    @Autowired
-    CustomizeAuthenticationSuccessHandler authenticationSuccessHandler;
-
-    //登录失败处理逻辑
-    @Autowired
-    CustomizeAuthenticationFailureHandler authenticationFailureHandler;
-
-    //权限拒绝处理逻辑
-    @Autowired
-    CustomizeAccessDeniedHandler accessDeniedHandler;
-
-    //匿名用户访问无权限资源时的异常
-    @Autowired
-    CustomizeAuthenticationEntryPoint authenticationEntryPoint;
-
-    //会话失效(账号被挤下线)处理逻辑
-    @Autowired
-    CustomizeSessionInformationExpiredStrategy sessionInformationExpiredStrategy;
-
-    //登出成功处理逻辑
-    @Autowired
-    CustomizeLogoutSuccessHandler logoutSuccessHandler;
-
-    //访问决策管理器
-    @Autowired
-    CustomizeAccessDecisionManager accessDecisionManager;
-
-    //实现权限拦截
-    @Autowired
-    CustomizeFilterInvocationSecurityMetadataSource securityMetadataSource;
 
     @Autowired
-    private CustomizeAbstractSecurityInterceptor securityInterceptor;
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        //获取用户账号密码及权限信息
-        return new UserDetailsServiceImpl();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        // 设置默认的加密方式（强hash方式加密）
-        return new BCryptPasswordEncoder();
-    }
+    private UserDetailsService userDetailsService;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService());
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // 使用自定义登录身份认证组件
+        auth.authenticationProvider(new JwtAuthenticationProvider(userDetailsService));
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();
-        http.authorizeRequests().
-                //antMatchers("/getUser").hasAuthority("query_user").
-                //antMatchers("/**").fullyAuthenticated().
-                withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
-                    @Override
-                    public <O extends FilterSecurityInterceptor> O postProcess(O o) {
-                        o.setAccessDecisionManager(accessDecisionManager);//决策管理器
-                        o.setSecurityMetadataSource(securityMetadataSource);//安全元数据源
-                        return o;
-                    }
-                }).
-                //登出
-                and().logout().
-                    permitAll().//允许所有用户
-                    logoutSuccessHandler(logoutSuccessHandler).//登出成功处理逻辑
-                    deleteCookies("JSESSIONID").//登出之后删除cookie
-                //登入
-                and().formLogin().
-                    permitAll().//允许所有用户
-                    successHandler(authenticationSuccessHandler).//登录成功处理逻辑
-                    failureHandler(authenticationFailureHandler).//登录失败处理逻辑
-                //异常处理(权限拒绝、登录失效等)
-                and().exceptionHandling().
-                    accessDeniedHandler(accessDeniedHandler).//权限拒绝处理逻辑
-                    authenticationEntryPoint(authenticationEntryPoint).//匿名用户访问无权限资源时的异常处理
-                //会话管理
-                and().sessionManagement().
-                    maximumSessions(1).//同一账号同时登录最大用户数
-                    expiredSessionStrategy(sessionInformationExpiredStrategy);//会话失效(账号被挤下线)处理逻辑
-        http.addFilterBefore(securityInterceptor, FilterSecurityInterceptor.class);
+        // 禁用 csrf, 由于使用的是JWT，我们这里不需要csrf
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                // 跨域预检请求
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // 登录URL
+                .antMatchers("/school/login").permitAll()
+                // swagger
+                .antMatchers("/swagger**/**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/v2/**").permitAll()
+                // 其他所有请求需要身份认证
+                .anyRequest().authenticated();
+        // 退出登录处理器
+        http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+        // 开启登录认证流程过滤器
+        http.addFilterBefore(new JwtLoginFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        // 访问控制时登录状态检查过滤器
+        http.addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
     }
-}*/
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encode = bCryptPasswordEncoder.encode("123456");
+        System.out.println(encode);
+    }
+
+}
