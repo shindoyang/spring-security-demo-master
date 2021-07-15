@@ -1,5 +1,4 @@
 package com.admission.security.config.handler;
-/*
 
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,12 +11,11 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Iterator;
 
-*/
 /**
  * @Author: Hutengfei
  * @Description: 访问决策管理器
  * @Date Create in 2019/9/3 20:38
- *//*
+ */
 
 @Component
 public class CustomizeAccessDecisionManager implements AccessDecisionManager {
@@ -49,4 +47,3 @@ public class CustomizeAccessDecisionManager implements AccessDecisionManager {
         return true;
     }
 }
-*/

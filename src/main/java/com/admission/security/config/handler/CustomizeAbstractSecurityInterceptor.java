@@ -1,5 +1,5 @@
 package com.admission.security.config.handler;
-/*
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.SecurityMetadataSource;
 import org.springframework.security.access.intercept.AbstractSecurityInterceptor;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import javax.servlet.*;
 import java.io.IOException;
 
-*//**
+/**
  * @Author: Hutengfei
  * @Description: 权限拦截器
  * @Date Create in 2019/9/4 16:25
- *//*
+ */
 @Service
 public class CustomizeAbstractSecurityInterceptor extends AbstractSecurityInterceptor implements Filter {
 
@@ -49,10 +49,10 @@ public class CustomizeAbstractSecurityInterceptor extends AbstractSecurityInterc
         //再调用MyAccessDecisionManager的decide方法来校验用户的权限是否足够
         InterceptorStatusToken token = super.beforeInvocation(fi);
         try {
-        //执行下一个拦截器
+            //执行下一个拦截器
             fi.getChain().doFilter(fi.getRequest(), fi.getResponse());
         } finally {
             super.afterInvocation(token, null);
         }
     }
-}*/
+}

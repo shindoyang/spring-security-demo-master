@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+/**
+ * 已登录用户访问无权限资源时的异常
+ */
 @Component
 public class CustomizeAccessDeniedHandler implements AccessDeniedHandler {
 

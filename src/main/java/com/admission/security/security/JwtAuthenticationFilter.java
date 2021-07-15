@@ -33,14 +33,20 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String requestURI = request.getRequestURI();
         log.info("当前用户：{}，请求接口：{}", SecurityUtils.getUsername(), requestURI);
-        // 获取token, 并检查登录状态
-        Object authentication = SecurityUtils.checkAuthentication(request);
-        if (null != authentication) {
+        if ("/school/user/getUserByCode".equals(requestURI)) {
             chain.doFilter(request, response);
         } else {
-            CustomizeAuthenticationEntryPoint customizeAuthenticationEntryPoint = (CustomizeAuthenticationEntryPoint) SpringUtils.getBean("customizeAuthenticationEntryPoint");
-            customizeAuthenticationEntryPoint.commence(request, response, new AuthenticationServiceException("token 异常"));
+            // 获取token, 并检查登录状态
+            Object authentication = SecurityUtils.checkAuthentication(request);
+            if (null != authentication) {
+                chain.doFilter(request, response);
+            } else {
+                CustomizeAuthenticationEntryPoint customizeAuthenticationEntryPoint = (CustomizeAuthenticationEntryPoint) SpringUtils.getBean("customizeAuthenticationEntryPoint");
+                customizeAuthenticationEntryPoint.commence(request, response, new AuthenticationServiceException("token 异常"));
+            }
         }
+        chain.doFilter(request, response);
+
     }
 
 }
