@@ -2,6 +2,7 @@ package com.admission.security.config;
 
 import com.admission.security.config.handler.CustomizeAccessDeniedHandler;
 import com.admission.security.config.handler.CustomizeAuthenticationEntryPoint;
+import com.admission.security.security.JwtAuthenticationFilter;
 import com.admission.security.security.JwtAuthenticationProvider;
 import com.admission.security.security.JwtLoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 开启登录认证流程过滤器
         http.addFilterBefore(new JwtLoginFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
         // 访问控制时登录状态检查过滤器
-//        http.addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
         //异常处理(权限拒绝、登录失效等)
         http.exceptionHandling().accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint);
     }

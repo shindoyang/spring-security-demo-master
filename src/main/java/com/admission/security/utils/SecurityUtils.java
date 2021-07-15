@@ -43,11 +43,14 @@ public class SecurityUtils {
      *
      * @param request
      */
-    public static void checkAuthentication(HttpServletRequest request) {
+    public static Object checkAuthentication(HttpServletRequest request) {
         // 获取令牌并根据令牌获取登录认证信息
         Authentication authentication = JwtTokenUtils.getAuthenticationeFromToken(request);
-        // 设置登录认证信息到上下文
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (null != authentication) {
+            // 设置登录认证信息到上下文
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        return authentication;
     }
 
     /**

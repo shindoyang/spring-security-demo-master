@@ -1,8 +1,12 @@
 package com.admission.security.security;
 
+import com.admission.security.config.handler.CustomizeAuthenticationEntryPoint;
 import com.admission.security.utils.SecurityUtils;
+import com.admission.security.utils.SpringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -17,6 +21,7 @@ import java.io.IOException;
  * @author Louis
  * @date Jun 29, 2019
  */
+@Slf4j
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Autowired
@@ -26,9 +31,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        String requestURI = request.getRequestURI();
+        log.info("当前用户：{}，请求接口：{}", SecurityUtils.getUsername(), requestURI);
         // 获取token, 并检查登录状态
-        SecurityUtils.checkAuthentication(request);
-        chain.doFilter(request, response);
+        Object authentication = SecurityUtils.checkAuthentication(request);
+        if (null != authentication) {
+            chain.doFilter(request, response);
+        } else {
+            CustomizeAuthenticationEntryPoint customizeAuthenticationEntryPoint = (CustomizeAuthenticationEntryPoint) SpringUtils.getBean("customizeAuthenticationEntryPoint");
+            customizeAuthenticationEntryPoint.commence(request, response, new AuthenticationServiceException("token 异常"));
+        }
     }
 
 }
