@@ -4,7 +4,6 @@ import com.admission.security.VO.*;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
-import com.admission.security.config.service.UserToolService;
 import com.admission.security.entity.SysSchool;
 import com.admission.security.entity.SysStudent;
 import com.admission.security.entity.SysUser;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,8 +44,6 @@ public class UserController {
     SysStudentService sysStudentService;
     @Autowired
     SysSchoolService sysSchoolService;
-    @Autowired
-    UserToolService userToolService;
 
     @PostMapping("/login")
     public JsonResult login(HttpServletResponse response, String username, String password) {
@@ -122,7 +118,7 @@ public class UserController {
      * 获取所有学校信息，可过滤
      */
     @GetMapping("/getSchool")
-    public JsonResult getSchool(HttpServletRequest request, SchoolRequestVO param) {
+    public JsonResult getSchool(SchoolRequestVO param) {
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
@@ -131,7 +127,7 @@ public class UserController {
         }
 
         IPage<SysSchool> page = new Page<>(pageNo, pageSize);
-        Object list = sysSchoolService.findList(request, page, param);
+        Object list = sysSchoolService.findList(page, param);
         return ResultTool.success(list);
     }
 
@@ -139,15 +135,15 @@ public class UserController {
      * 新建账号、学校信息
      */
     @PostMapping("/createUser")
-    public JsonResult createUser(HttpServletRequest request, @RequestBody UserRequestVO param) {
-        return sysSchoolService.addSchool(request, param);
+    public JsonResult createUser(@RequestBody UserRequestVO param) {
+        return sysSchoolService.addSchool(param);
     }
 
     /**
      * 更新账号信息
      */
     @PostMapping("/updateUser")
-    public JsonResult updateUser(HttpServletRequest request, @RequestBody UserUpdateRequestVO param) {
+    public JsonResult updateUser(@RequestBody UserUpdateRequestVO param) {
         //参数校验
         if (null == param.getId()) {
             return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
@@ -178,8 +174,8 @@ public class UserController {
      * 更新学校信息
      */
     @PostMapping("/updateSchool")
-    public JsonResult updateSchool(HttpServletRequest request, @RequestBody SchoolUpdateRequestVO param) {
-        return sysSchoolService.updateSchool(request, param);
+    public JsonResult updateSchool(@RequestBody SchoolUpdateRequestVO param) {
+        return sysSchoolService.updateSchool(param);
     }
 
 }

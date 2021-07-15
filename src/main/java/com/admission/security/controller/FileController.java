@@ -4,7 +4,6 @@ import com.admission.security.VO.FileRequestVO;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
-import com.admission.security.config.service.UserToolService;
 import com.admission.security.entity.SysUserFile;
 import com.admission.security.service.FileUploadService;
 import com.admission.security.service.SysUserFileService;
@@ -28,16 +27,14 @@ public class FileController {
     FileUploadService fileUploadService;
     @Autowired
     SysUserFileService sysUserFileService;
-    @Autowired
-    UserToolService userToolService;
 
     /**
      * 上传接口
      * 仅负责临时存储文件，做简单校验，后续文件处理由跑批负责
      */
     @PostMapping("/upload")
-    public JsonResult upload(HttpServletRequest request, MultipartFile file, FileRequestVO param) {
-        return fileUploadService.uploadFile(request, file, param);
+    public JsonResult upload(MultipartFile file, FileRequestVO param) {
+        return fileUploadService.uploadFile(file, param);
     }
 
 
@@ -64,8 +61,8 @@ public class FileController {
      * 3. 直接写，这里注意，finish的时候会自动关闭OutputStream,当然你外面再关闭流问题不大
      */
     @GetMapping("download")
-    public void download(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) throws Exception {
-        fileUploadService.getDownloadData(request, response, param);
+    public void download(HttpServletResponse response, FileRequestVO param) throws Exception {
+        fileUploadService.getDownloadData(response, param);
     }
 
 }

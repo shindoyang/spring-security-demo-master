@@ -1,7 +1,6 @@
 package com.admission.security.schedule;
 
 import com.admission.security.config.AdmissionConfig;
-import com.admission.security.config.service.UserToolService;
 import com.admission.security.constant.RedisConstant;
 import com.admission.security.entity.*;
 import com.admission.security.service.SysSchoolService;
@@ -45,9 +44,6 @@ public class UserFileEnhanceScheduled {
 
     @Autowired
     SysSchoolService sysSchoolService;
-
-    @Autowired
-    UserToolService userToolService;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;

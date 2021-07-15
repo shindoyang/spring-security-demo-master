@@ -5,26 +5,24 @@ import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
 import com.admission.security.config.AdmissionConfig;
-import com.admission.security.config.service.UserToolService;
 import com.admission.security.entity.NmsSmsTmplExcelVo;
 import com.admission.security.entity.SysUserFile;
 import com.admission.security.service.FileUploadService;
 import com.admission.security.utils.FileUtils;
 import com.admission.security.utils.IdUtils;
 import com.admission.security.utils.MobileUtil;
+import com.admission.security.utils.SecurityUtils;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mfexcel.sensitive.engine.SensitiveEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -40,14 +38,12 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${file.max-rows}")
     int fileMaxRows;
 
-    @Autowired
-    UserToolService userToolService;
-
     @Resource
     SysUserFileServiceImpl sysUserFileService;
 
     @Override
-    public JsonResult uploadFile(HttpServletRequest request, MultipartFile file, FileRequestVO param) {
+    public JsonResult uploadFile(MultipartFile file, FileRequestVO param) {
+        String curUser = SecurityUtils.getUsername();
         //1、文件保存
         File saveFile = null;
         if (null != file && StringUtils.isNotBlank(file.getOriginalFilename())) {
@@ -69,7 +65,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
             QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
             wrapper.eq("file_name", originalFilename);
-            wrapper.eq("account", userToolService.getLoginUser(request));
+            wrapper.eq("account", curUser);
             SysUserFile dbsysUserFile = sysUserFileService.getOne(wrapper);
             if (null != dbsysUserFile) {
                 return ResultTool.fail(ResultCode.FAIL_FILE_REPEAT_ERROR);
@@ -118,7 +114,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
             }
             SysUserFile sysUserFile = new SysUserFile();
-            sysUserFile.setAccount(userToolService.getLoginUser(request));
+            sysUserFile.setAccount(curUser);
             sysUserFile.setFileName(originalFilename);
             sysUserFile.setFileUrl(fileName);
             sysUserFile.setCreateTime(new Date());
@@ -128,7 +124,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public JsonResult getDownloadData(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) throws Exception {
+    public JsonResult getDownloadData(HttpServletResponse response, FileRequestVO param) throws Exception {
 
         try {
             QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
@@ -144,8 +140,8 @@ public class FileUploadServiceImpl implements FileUploadService {
             }
 
             //校验当前用户是否有该文件的操作权限
-            String loginUser = userToolService.getLoginUser(request);
-            if (null != sysUserFile && loginUser != null && !loginUser.equals(sysUserFile.getAccount())) {
+            String curUser = SecurityUtils.getUsername();
+            if (null != sysUserFile && curUser != null && !curUser.equals(sysUserFile.getAccount())) {
                 throw new Exception(ResultCode.FAIL_NO_FILE_AUTH.getMessage());
             }
 

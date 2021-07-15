@@ -6,7 +6,6 @@ import com.admission.security.VO.UserRequestVO;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
-import com.admission.security.config.service.UserToolService;
 import com.admission.security.dao.SysSchoolMapper;
 import com.admission.security.entity.SysSchool;
 import com.admission.security.entity.SysUser;
@@ -14,6 +13,7 @@ import com.admission.security.service.SysSchoolService;
 import com.admission.security.service.SysUserService;
 import com.admission.security.utils.DateUtils;
 import com.admission.security.utils.MD5Util;
+import com.admission.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -31,22 +30,17 @@ import java.util.Date;
 @Service
 public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool>
         implements SysSchoolService {
-
-    @Autowired
-    UserToolService userToolService;
     @Autowired
     SysUserService sysUserService;
     @Autowired
     SysSchoolService sysSchoolService;
 
     @Override
-    public Object findList(HttpServletRequest request, IPage<SysSchool> page, SchoolRequestVO param) {
+    public Object findList(IPage<SysSchool> page, SchoolRequestVO param) {
         QueryWrapper<SysSchool> wrapper = new QueryWrapper<>();
 
-        if (null != userToolService.getLoginUser(request)) {
-            if (!"admin".equals(userToolService.getLoginUser(request))) {
-                return ResultTool.fail(ResultCode.NO_PERMISSION);
-            }
+        if (!"admin".equals(SecurityUtils.getUsername())) {
+            return ResultTool.fail(ResultCode.NO_PERMISSION);
         }
         if (null != param.getSchoolName() && Strings.isNotEmpty(param.getSchoolName()) && Strings.isNotBlank(param.getSchoolName())) {
             wrapper.like("school_name", param.getSchoolName());
@@ -67,8 +61,8 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
 
     @Override
     @Transactional
-    public JsonResult addSchool(HttpServletRequest request, UserRequestVO param) {
-        if (!"admin".equals(userToolService.getLoginUser(request))) {
+    public JsonResult addSchool(UserRequestVO param) {
+        if (!"admin".equals(SecurityUtils.getUsername())) {
             return ResultTool.fail(ResultCode.NO_PERMISSION);
         }
 
@@ -120,8 +114,8 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
     }
 
     @Override
-    public JsonResult updateSchool(HttpServletRequest request, SchoolUpdateRequestVO param) {
-        if (!"admin".equals(userToolService.getLoginUser(request))) {
+    public JsonResult updateSchool(SchoolUpdateRequestVO param) {
+        if (!"admin".equals(SecurityUtils.getUsername())) {
             return ResultTool.fail(ResultCode.NO_PERMISSION);
         }
 
