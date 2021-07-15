@@ -53,11 +53,18 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         // 此过滤器的用户名密码默认从request.getParameter()获取，但是这种
         // 读取方式不能读取到如 application/json 等 post 请求数据，需要把
         // 用户名密码的读取逻辑修改为到流中读取request.getInputStream()
-
+        String username = null;
+        String password = null;
         String body = getBody(request);
         JSONObject jsonObject = JSON.parseObject(body);
-        String username = jsonObject.getString("username");
-        String password = jsonObject.getString("password");
+        if (null != jsonObject) {
+            username = jsonObject.getString("username");
+            password = jsonObject.getString("password");
+        } else {
+            username = request.getParameter("username");
+            password = request.getParameter("password");
+        }
+
 
         if (username == null) {
             username = "";
@@ -68,6 +75,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         }
 
         username = username.trim();
+        password = password.trim();
 
         JwtAuthenticatioToken authRequest = new JwtAuthenticatioToken(username, password);
 
