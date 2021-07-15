@@ -1,7 +1,7 @@
 package com.admission.security.service.impl;
 
-import com.admission.security.dao.SysUserDao;
 import com.admission.security.entity.SysUser;
+import com.admission.security.mapper.SysUserDao;
 import com.admission.security.service.SysUserService;
 import org.springframework.stereotype.Service;
 

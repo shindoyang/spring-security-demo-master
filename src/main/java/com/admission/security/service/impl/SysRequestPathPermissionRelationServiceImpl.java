@@ -1,7 +1,7 @@
 package com.admission.security.service.impl;
 
 import com.admission.security.entity.SysRequestPathPermissionRelation;
-import com.admission.security.dao.SysRequestPathPermissionRelationDao;
+import com.admission.security.mapper.SysRequestPathPermissionRelationDao;
 import com.admission.security.service.SysRequestPathPermissionRelationService;
 import org.springframework.stereotype.Service;
 

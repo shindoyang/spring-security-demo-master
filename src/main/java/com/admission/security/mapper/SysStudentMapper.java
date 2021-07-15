@@ -1,7 +1,7 @@
-package com.admission.security.dao;
+package com.admission.security.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.admission.security.entity.SysStudent;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * @Entity com.spring.security.entity.SysStudent

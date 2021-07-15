@@ -1,4 +1,4 @@
-package com.admission.security.dao;
+package com.admission.security.mapper;
 
 import com.admission.security.entity.SysUser;
 import org.apache.ibatis.annotations.Param;

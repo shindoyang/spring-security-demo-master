@@ -1,7 +1,7 @@
 package com.admission.security.service.impl;
 
-import com.admission.security.dao.SysPermissionDao;
 import com.admission.security.entity.SysPermission;
+import com.admission.security.mapper.SysPermissionDao;
 import com.admission.security.service.SysPermissionService;
 import org.springframework.stereotype.Service;
 

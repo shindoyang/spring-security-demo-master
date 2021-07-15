@@ -1,8 +1,8 @@
 package com.admission.security.service.impl;
 
 import com.admission.security.VO.FileRequestVO;
-import com.admission.security.dao.SysUserFileMapper;
 import com.admission.security.entity.SysUserFile;
+import com.admission.security.mapper.SysUserFileMapper;
 import com.admission.security.service.SysUserFileService;
 import com.admission.security.utils.DateUtils;
 import com.admission.security.utils.SecurityUtils;

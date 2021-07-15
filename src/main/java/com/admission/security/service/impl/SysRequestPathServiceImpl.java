@@ -1,7 +1,7 @@
 package com.admission.security.service.impl;
 
 import com.admission.security.entity.SysRequestPath;
-import com.admission.security.dao.SysRequestPathDao;
+import com.admission.security.mapper.SysRequestPathDao;
 import com.admission.security.service.SysRequestPathService;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class SysRequestPathServiceImpl implements SysRequestPathService {
      * 查询多条数据
      *
      * @param offset 查询起始位置
-     * @param limit 查询条数
+     * @param limit  查询条数
      * @return 对象列表
      */
     @Override

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.admission.security.dao.SysRequestPathPermissionRelationDao">
+<mapper namespace="com.admission.security.mapper.SysRequestPathPermissionRelationDao">
 
-    <resultMap type="com.admission.security.entity.SysRequestPathPermissionRelation" id="SysRequestPathPermissionRelationMap">
+    <resultMap type="com.admission.security.entity.SysRequestPathPermissionRelation"
+               id="SysRequestPathPermissionRelationMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="urlId" column="url_id" jdbcType="INTEGER"/>
         <result property="permissionId" column="permission_id" jdbcType="INTEGER"/>
@@ -27,7 +28,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="SysRequestPathPermissionRelationMap">
         select
-          id, url_id, permission_id
+        id, url_id, permission_id
         from sys_request_path_permission_relation
         <where>
             <if test="id != null">
@@ -62,7 +63,7 @@
                 permission_id = #{permissionId},
             </if>
         </set>
-        where  = #{id}
+        where = #{id}
     </update>
 
     <!--通过主键删除-->

@@ -1,4 +1,4 @@
-package com.admission.security.dao;
+package com.admission.security.mapper;
 
 import com.admission.security.entity.SysSchool;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

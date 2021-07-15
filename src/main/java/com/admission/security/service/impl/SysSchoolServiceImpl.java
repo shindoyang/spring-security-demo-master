@@ -6,19 +6,21 @@ import com.admission.security.VO.UserRequestVO;
 import com.admission.security.common.entity.JsonResult;
 import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
-import com.admission.security.dao.SysSchoolMapper;
 import com.admission.security.entity.SysSchool;
 import com.admission.security.entity.SysUser;
+import com.admission.security.entity.SysUserRoleRelation;
+import com.admission.security.mapper.SysSchoolMapper;
 import com.admission.security.service.SysSchoolService;
+import com.admission.security.service.SysUserRoleRelationService;
 import com.admission.security.service.SysUserService;
 import com.admission.security.utils.DateUtils;
-import com.admission.security.utils.MD5Util;
 import com.admission.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,10 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
     SysUserService sysUserService;
     @Autowired
     SysSchoolService sysSchoolService;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    SysUserRoleRelationService sysUserRoleRelationService;
 
     @Override
     public Object findList(IPage<SysSchool> page, SchoolRequestVO param) {
@@ -90,7 +96,8 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         SysUser sysUser = new SysUser();
         sysUser.setAccount(param.getAccount());
         sysUser.setUserName(param.getUsername());
-        String dbPassword = MD5Util.getStringMD5("admission:" + param.getPassword().trim());
+//        String dbPassword = MD5Util.getStringMD5("admission:" + param.getPassword().trim());
+        String dbPassword = bCryptPasswordEncoder.encode(param.getPassword().trim());
         sysUser.setPassword(dbPassword);
         sysUser.setEnabled(true);
         sysUser.setAccountNonExpired(true);
@@ -99,7 +106,13 @@ public class SysSchoolServiceImpl extends ServiceImpl<SysSchoolMapper, SysSchool
         sysUser.setCredentialsNonExpired(true);
         sysUser.setCreateTime(new Date());
         sysUser.setCreateUser(1);
-        sysUserService.insert(sysUser);
+        SysUser insert = sysUserService.insert(sysUser);
+
+        //新增用户权限
+        SysUserRoleRelation sysUserRoleRelation = new SysUserRoleRelation();
+        sysUserRoleRelation.setUserId(insert.getId());
+        sysUserRoleRelation.setRoleId(2);
+        sysUserRoleRelationService.save(sysUserRoleRelation);
 
         //新增学校
         SysSchool sysSchool = new SysSchool();

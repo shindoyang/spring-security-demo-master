@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("com.admission.security.dao")
+@MapperScan("com.admission.security.mapper")
 public class MybatisPlusConfig {
 
     /**
