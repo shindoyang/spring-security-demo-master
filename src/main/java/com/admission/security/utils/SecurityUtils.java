@@ -58,12 +58,19 @@ public class SecurityUtils {
     public static String getUsername() {
         String username = null;
         Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal != null && principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            }
+        if (authentication == null) {
+            return null;
         }
+        Object principal = authentication.getPrincipal();
+        if (principal == null || principal.equals("anonymousUser")) {
+            return null;
+        }
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
         return username;
     }
 
