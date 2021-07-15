@@ -26,6 +26,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        // 设置默认的加密方式（强hash方式加密）
+        return new BCryptPasswordEncoder();
+    }
+
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 使用自定义登录身份认证组件

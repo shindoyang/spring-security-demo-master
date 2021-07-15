@@ -6,6 +6,7 @@ import com.admission.security.dao.SysUserFileMapper;
 import com.admission.security.entity.SysUserFile;
 import com.admission.security.service.SysUserFileService;
 import com.admission.security.utils.DateUtils;
+import com.admission.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,9 +32,10 @@ public class SysUserFileServiceImpl extends ServiceImpl<SysUserFileMapper, SysUs
     public Object findList(HttpServletRequest request, IPage<SysUserFile> page, FileRequestVO param) {
         QueryWrapper<SysUserFile> wrapper = new QueryWrapper<>();
 
-        if (null != userToolService.getLoginUser(request)) {
+        /*if (null != userToolService.getLoginUser(request)) {
             wrapper.eq("account", userToolService.getLoginUser(request));
-        }
+        }*/
+        wrapper.eq("account", SecurityUtils.getUsername());
         if (null != param.getFileName() && Strings.isNotEmpty(param.getFileName()) && Strings.isNotBlank(param.getFileName())) {
             wrapper.like("file_name", param.getFileName());
         }

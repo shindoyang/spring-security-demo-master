@@ -8,6 +8,7 @@ import com.admission.security.config.service.UserToolService;
 import com.admission.security.entity.SysUserFile;
 import com.admission.security.service.FileUploadService;
 import com.admission.security.service.SysUserFileService;
+import com.admission.security.utils.SecurityUtils;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -48,10 +49,10 @@ public class FileController {
     @PostMapping("/page")
     public JsonResult findAll(HttpServletRequest request, @RequestBody FileRequestVO param) {
         //1、检查是否已登录
-        if (!userToolService.checkUserlogin(request)) {
+        /*if (!userToolService.checkUserlogin(request)) {
             return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/file/page 文件列表接口");
+        }*/
+        log.info("当前用户：{}，请求接口：{}", SecurityUtils.getUsername(), "/file/page 文件列表接口");
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
