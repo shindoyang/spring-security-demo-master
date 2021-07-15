@@ -123,12 +123,6 @@ public class UserController {
      */
     @GetMapping("/getSchool")
     public JsonResult getSchool(HttpServletRequest request, SchoolRequestVO param) {
-        //1、检查是否已登录
-        if (!userToolService.checkUserlogin(request)) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/getSchool 学校信息接口");
-
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
@@ -146,11 +140,6 @@ public class UserController {
      */
     @PostMapping("/createUser")
     public JsonResult createUser(HttpServletRequest request, @RequestBody UserRequestVO param) {
-        //1、检查是否已登录
-        if (!userToolService.checkUserlogin(request)) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/createUser 创建账号接口");
         return sysSchoolService.addSchool(request, param);
     }
 
@@ -159,12 +148,6 @@ public class UserController {
      */
     @PostMapping("/updateUser")
     public JsonResult updateUser(HttpServletRequest request, @RequestBody UserUpdateRequestVO param) {
-        //1、检查是否已登录
-        if (!userToolService.checkUserlogin(request)) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/updateUser 更新账号接口");
-
         //参数校验
         if (null == param.getId()) {
             return ResultTool.fail(ResultCode.PARAM_IS_BLANK);
@@ -196,12 +179,6 @@ public class UserController {
      */
     @PostMapping("/updateSchool")
     public JsonResult updateSchool(HttpServletRequest request, @RequestBody SchoolUpdateRequestVO param) {
-        //1、检查是否已登录
-        if (!userToolService.checkUserlogin(request)) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/updateSchool 更新学校信息接口");
-
         return sysSchoolService.updateSchool(request, param);
     }
 

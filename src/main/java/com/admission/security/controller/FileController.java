@@ -37,17 +37,12 @@ public class FileController {
      */
     @PostMapping("/upload")
     public JsonResult upload(HttpServletRequest request, MultipartFile file, FileRequestVO param) {
-        if (!userToolService.checkUserlogin(request)) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/file/upload 文件上传接口");
         return fileUploadService.uploadFile(request, file, param);
     }
 
 
     @PostMapping("/page")
     public JsonResult findAll(HttpServletRequest request, @RequestBody FileRequestVO param) {
-//        log.info("当前用户：{}，请求接口：{}", SecurityUtils.getUsername(), "/file/page 文件列表接口");
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
@@ -70,11 +65,6 @@ public class FileController {
      */
     @GetMapping("download")
     public void download(HttpServletRequest request, HttpServletResponse response, FileRequestVO param) throws Exception {
-
-        if (!userToolService.checkUserlogin(request)) {
-            throw new Exception(ResultCode.USER_NOT_LOGIN.getMessage());
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/file/download 文件下载接口");
         fileUploadService.getDownloadData(request, response, param);
     }
 

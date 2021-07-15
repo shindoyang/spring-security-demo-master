@@ -31,12 +31,6 @@ public class LinkController {
 
     @PostMapping("/page")
     public JsonResult findAll(HttpServletRequest request, @RequestBody LinkRequestVO param) {
-        //1、检查是否已登录
-        if (!userToolService.checkUserlogin(request)) {
-            return ResultTool.fail(ResultCode.USER_NOT_LOGIN);
-        }
-        log.info("当前用户：{}，请求接口：{}", userToolService.getLoginUser(request), "/link/page 已访问链接统计接口");
-
         //获取前台发送过来的数据
         Integer pageNo = param.getPage();
         Integer pageSize = param.getSize();
