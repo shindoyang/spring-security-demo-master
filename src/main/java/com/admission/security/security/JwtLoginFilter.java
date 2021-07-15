@@ -5,6 +5,7 @@ import com.admission.security.common.enums.ResultCode;
 import com.admission.security.common.utils.ResultTool;
 import com.admission.security.utils.HttpUtils;
 import com.admission.security.utils.JwtTokenUtils;
+import com.admission.security.utils.SecurityUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.authentication.*;
@@ -89,7 +90,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
             eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
         }
         // 生成并返回token给客户端，后续访问携带此token
-        JwtAuthenticatioToken token = new JwtAuthenticatioToken(null, null, JwtTokenUtils.generateToken(authResult));
+        JwtAuthenticatioToken token = new JwtAuthenticatioToken(SecurityUtils.getUsername(), null, authResult.getAuthorities(), JwtTokenUtils.generateToken(authResult));
         HttpUtils.write(response, token);
     }
 

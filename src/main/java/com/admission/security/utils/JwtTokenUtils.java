@@ -198,10 +198,11 @@ public class JwtTokenUtils implements Serializable {
      */
     public static String getToken(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String tokenHead = "Bearer ";
+        String tokenHead_up = "Bearer ";
+        String tokenHead = "bearer ";
         if (token == null) {
             token = request.getHeader("token");
-        } else if (token.contains(tokenHead)) {
+        } else if (token.contains(tokenHead) || token.contains(tokenHead_up)) {
             token = token.substring(tokenHead.length());
         }
         if ("".equals(token)) {
