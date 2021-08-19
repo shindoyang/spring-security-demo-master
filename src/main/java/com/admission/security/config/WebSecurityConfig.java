@@ -93,7 +93,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
         //异常处理(权限拒绝、登录失效等)
         http.exceptionHandling().accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(authenticationEntryPoint);
+        // 添加CORS filter
+//        http.addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
+    /*@Bean
+    public CorsFilter corsFilter() throws Exception {
+        return new CorsFilter();
+    }*/
 
     @Bean
     @Override
